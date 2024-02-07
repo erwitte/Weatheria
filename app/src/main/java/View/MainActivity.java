@@ -4,11 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.weatheria.R;
 
-import java.util.List;
-
+import Controller.LocationHandler;
 import Controller.LocationToCoords;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,11 +18,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        LocationToCoords test = new LocationToCoords(locations -> {
-            for (String as : locations){
-                Log.i("Ergebnisse", as);
-            }
+
+        EditText initialInput = findViewById(R.id.etCity);
+        Button btnSubmit = findViewById(R.id.btnGet);
+        LocationHandler locationHandler = new LocationHandler(this);
+
+        btnSubmit.setOnClickListener(view -> {
+            String location = initialInput.getText().toString();
+            locationHandler.addLocationViaText(location);
         });
-        test.execute("Bremen");
     }
 }

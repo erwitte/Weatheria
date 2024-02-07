@@ -12,4 +12,7 @@ public interface LocationDAO {
 
     @Query("SELECT name FROM Location")
     List<Location> getAllLocations();
+
+    @Query("SELECT exactName FROM Location WHERE exactName like :exactName")
+    String getSameExactName(String exactName);
 }

@@ -7,13 +7,16 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Location {
     @PrimaryKey
+    private String exactName;
+    @NonNull
     private String name;
     @NonNull
     private double latitude;
     @NonNull
     private double longitude;
 
-    public Location(String name, double latitude, double longitude){
+    public Location(String exactName, String name, double latitude, double longitude){
+        this.exactName = exactName;
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
