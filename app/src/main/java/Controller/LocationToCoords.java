@@ -15,6 +15,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+//Erik Witte
 public class LocationToCoords extends AsyncTask<String, Void, String> {
 
     private List<String> matchingLocations;

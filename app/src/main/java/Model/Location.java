@@ -4,15 +4,14 @@ import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+//Erik Witte
 @Entity
 public class Location {
     @PrimaryKey
+    @NonNull
     private String exactName;
-    @NonNull
     private String name;
-    @NonNull
     private double latitude;
-    @NonNull
     private double longitude;
 
     public Location(String exactName, String name, double latitude, double longitude){
@@ -32,5 +31,9 @@ public class Location {
 
     public double getLongitude() {
         return longitude;
+    }
+
+    public String getExactName(){
+        return exactName;
     }
 }
