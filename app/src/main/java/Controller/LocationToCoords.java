@@ -14,23 +14,29 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+
+import Model.Location;
 
 //Erik Witte
 public class LocationToCoords extends AsyncTask<String, Void, String> {
 
-    private List<String> matchingLocations;
-    private OnLocationsFetchedListener listener;
-    public LocationToCoords(OnLocationsFetchedListener listener){
+    private List<Location> matchingLocations;
+    private final CountDownLatch latch;
+    private String stringFromJson;
+
+    public LocationToCoords(CountDownLatch latch) {
         matchingLocations = new ArrayList<>();
-        this.listener = listener;
+        this.latch = latch;
     }
+
     @Override
     protected String doInBackground(String... params) {
-        String locationName = params[0];
-        try{
+        String desiredLocation = params[0];
+        try {
             //enkodiert den Ortsnamen so, dass er in URL genutzt werden kann
-            locationName = URLEncoder.encode(locationName, "UTF-8");
-            String queryUrl = "https://nominatim.openstreetmap.org/search?city=" + locationName + "&format=json";
+            desiredLocation = URLEncoder.encode(desiredLocation, "UTF-8");
+            String queryUrl = "https://nominatim.openstreetmap.org/search?city=" + desiredLocation + "&format=json";
 
             URL url = new URL(queryUrl);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -44,39 +50,38 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
-                return response.toString();
+                stringFromJson = response.toString();
+                if (stringFromJson != null) {
+                    try {
+                        // JSON Antwort parsen
+                        JSONArray jsonArray = new JSONArray(stringFromJson);
+                        if (jsonArray.length() > 0) {
+                            for (int arrayEntry = 0; arrayEntry < jsonArray.length(); arrayEntry++) {
+                                JSONObject jsonObject = jsonArray.getJSONObject(arrayEntry);
+                                String locationExactName = jsonObject.getString("display_name");
+                                String locationName = jsonObject.getString("name");
+                                double locationLatitude = jsonObject.getDouble("lat");
+                                double locationLongitude = jsonObject.getDouble("lon");
+                                matchingLocations.add(new Location(locationExactName, locationName, locationLatitude, locationLongitude));
+                            }
+                        }
+                        latch.countDown();
+                    } catch (JSONException e) {
+                        Log.e("JSONParseError", "Error parsing JSON", e);
+                    }
+                }
             } finally {
                 urlConnection.disconnect();
+                return "";
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             //Error fangen
             Log.e("FetchCityCoordinatesError", "Error fetching city coordinates", e);
             return null;
         }
     }
 
-    @Override
-    protected void onPostExecute(String response) {
-        if (response != null && !response.isEmpty()) {
-            try {
-                // JSON Antwort parsen
-                JSONArray jsonArray = new JSONArray(response);
-                if (jsonArray.length() > 0) {
-                    for (int arrayEntry=0; arrayEntry<jsonArray.length(); arrayEntry++) {
-                        JSONObject jsonObject = jsonArray.getJSONObject(arrayEntry);
-                        String locationName = jsonObject.getString("display_name");
-                        matchingLocations.add(locationName);
-                    }
-                }
-                listener.onLocationsFetched(matchingLocations);
-            } catch (JSONException e) {
-                Log.e("JSONParseError", "Error parsing JSON", e);
-            }
-        }
-    }
-
-    public List<String> chooseLocation(String locationName){
-        execute(locationName);
+    public List<Location> getMatchingLocations(){
         return matchingLocations;
     }
 }

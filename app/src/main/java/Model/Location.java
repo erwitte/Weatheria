@@ -15,7 +15,9 @@ public class Location {
     private double longitude;
 
     public Location(String exactName, String name, double latitude, double longitude){
+        // Lohne, Landkreis Vechta, Niedersachsen, 49393, Deutschland
         this.exactName = exactName;
+        // Lohne
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;

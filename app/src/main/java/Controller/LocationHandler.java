@@ -7,6 +7,7 @@ import androidx.room.Room;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import Model.AppDatabase;
 import Model.Location;
@@ -24,33 +25,40 @@ public class LocationHandler {
                 AppDatabase.class, "Location").allowMainThreadQueries().build();
     }
 
-    public void addLocationViaText(String newLocation){
-        List<String> asf = new ArrayList<>();
-        LocationToCoords test = new LocationToCoords(locations -> {
-            for (String as : locations) {
-                Log.i("Ergebnisse", as);
-                asf.add(as);
+    public List<Location> addLocationViaText(String newLocation){
+        // CountDownLatch ähnlich zu Semaphoren
+        CountDownLatch latch = new CountDownLatch(1);
+        List<Location> matchingLocations;
+        // für wettervorhersage werden koordinaten benötigt
+        LocationToCoords locationToCoords = new LocationToCoords(latch);
+        // locationToCoords auf eigenem Thread starten
+        locationToCoords.execute(newLocation);
+        try {
+            latch.await();
+            matchingLocations = locationToCoords.getMatchingLocations();
+            if (matchingLocations.size() == 0)
+                return null;
+            else {
+                if (matchingLocations.size() == 1)
+                    addLocationToDb(matchingLocations.get(0));
+                else {
+                    
+                }
             }
-        });
-        addLocationToDb(new Location("Lohne, Landkreis Vechta, Niedersachsen, 49393, Deutschland", "Lohne", 52, 52));
-
-        List<Location> es = db.locationDAO().getAllLocations();
-        new Thread(() -> {
-            for (Location a : es) {
-                Log.i("DB", a.getName());
-            }
-        }).start();
-        test.execute(newLocation);
+        } catch (InterruptedException e){
+            Log.i("interrupt exception", e.toString());
+            return null;
+        }
     }
 
     public void addLocationViaGps(){
 
     }
 
-    private void addLocationToDb(Location location){
+    private void addLocationToDb(Location newLocation){
         new Thread(() -> {
-            if (db.locationDAO().getSameExactName("Lohne, Landkreis Vechta, Niedersachsen, 49393, Deutschland") == null){
-                db.locationDAO().insert(location);
+            if (db.locationDAO().getSameExactName(newLocation.getExactName()) == null){
+                db.locationDAO().insert(newLocation);
             }
         }).start();
     }
