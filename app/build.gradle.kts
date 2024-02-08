@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.weatheria"
-    compileSdk = 34
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.example.weatheria"
-        minSdk = 33
-        targetSdk = 34
+        minSdk = 28
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
