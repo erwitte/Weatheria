@@ -19,4 +19,7 @@ public interface LocationDAO {
 
     @Query("DELETE FROM Location WHERE exactName = :exactName")
     void deleteEntry(String exactName);
+
+    @Query("SELECT * FROM location")
+    List<Location> getAll();
 }

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import androidx.room.Room;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -15,7 +14,6 @@ import Model.Location;
 //Erik Witte
 public class LocationHandler {
 
-    private String chosenLocation;
     private AppDatabase db;
 
     //
