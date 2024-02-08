@@ -15,6 +15,7 @@ import Model.Location;
 public class LocationHandler {
 
     private AppDatabase db;
+    CountDownLatch latch = new CountDownLatch(1);
 
     //
     public LocationHandler(Context context){
@@ -25,7 +26,6 @@ public class LocationHandler {
 
     public List<Location> addLocationViaText(String newLocation){
         // CountDownLatch ähnlich zu Semaphoren
-        CountDownLatch latch = new CountDownLatch(1);
         List<Location> matchingLocations;
         // für wettervorhersage werden koordinaten benötigt
         LocationToCoords locationToCoords = new LocationToCoords(latch);
@@ -74,5 +74,9 @@ public class LocationHandler {
         new Thread(() -> {
             db.locationDAO().deleteEntry(toDelete);
         }).start();
+    }
+
+    public CountDownLatch getLatch(){
+        return latch;
     }
 }
