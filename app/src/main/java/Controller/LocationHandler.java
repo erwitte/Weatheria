@@ -36,13 +36,18 @@ public class LocationHandler {
         try {
             latch.await();
             matchingLocations = locationToCoords.getMatchingLocations();
+            // keine Stadt entspricht der Suche
             if (matchingLocations.size() == 0)
-                return null;
+                return matchingLocations;
             else {
-                if (matchingLocations.size() == 1)
+                // genau eine Stadt entspricht der Suche
+                if (matchingLocations.size() == 1) {
                     addLocationToDb(matchingLocations.get(0));
+                    return matchingLocations;
+                }
+                // mehrere Städte passen, eine muss ausgewählt werden
                 else {
-                    
+                    return matchingLocations;
                 }
             }
         } catch (InterruptedException e){
@@ -55,11 +60,25 @@ public class LocationHandler {
 
     }
 
-    private void addLocationToDb(Location newLocation){
+    public void addLocationToDb(Location newLocation){
         new Thread(() -> {
             if (db.locationDAO().getSameExactName(newLocation.getExactName()) == null){
                 db.locationDAO().insert(newLocation);
             }
         }).start();
+    }
+
+    public List<Location> getDbEntries(){
+        return db.locationDAO().getAllLocations();
+    }
+
+    public void deleteDbEntry(String toDelete){
+        new Thread(() -> {
+            //db.locationDAO().deleteEntry(toDelete.getExactName());
+            db.locationDAO().deleteEntry(toDelete);
+        }).start();
+        List <Location> eafaf = getDbEntries();
+        for (Location a : eafaf)
+            Log.i("sngs", a.getName());
     }
 }

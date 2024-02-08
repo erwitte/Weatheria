@@ -16,4 +16,7 @@ public interface LocationDAO {
 
     @Query("SELECT exactName FROM Location WHERE exactName like :exactName")
     String getSameExactName(String exactName);
+
+    @Query("DELETE FROM Location WHERE exactName = :exactName")
+    void deleteEntry(String exactName);
 }

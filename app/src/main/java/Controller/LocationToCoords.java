@@ -56,6 +56,7 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
                         // JSON Antwort parsen
                         JSONArray jsonArray = new JSONArray(stringFromJson);
                         if (jsonArray.length() > 0) {
+                            // Locations aus JSON filtern und jeweils Objekte erzeugen
                             for (int arrayEntry = 0; arrayEntry < jsonArray.length(); arrayEntry++) {
                                 JSONObject jsonObject = jsonArray.getJSONObject(arrayEntry);
                                 String locationExactName = jsonObject.getString("display_name");
