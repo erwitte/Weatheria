@@ -72,13 +72,9 @@ public class LocationHandler {
         return db.locationDAO().getAllLocations();
     }
 
-    public void deleteDbEntry(String toDelete){
+    public void deleteDbEntry(Location toDelete){
         new Thread(() -> {
-            //db.locationDAO().deleteEntry(toDelete.getExactName());
-            db.locationDAO().deleteEntry(toDelete);
+            db.locationDAO().deleteEntry(toDelete.getExactName());
         }).start();
-        List <Location> eafaf = getDbEntries();
-        for (Location a : eafaf)
-            Log.i("sngs", a.getName());
     }
 }

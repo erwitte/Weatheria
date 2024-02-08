@@ -26,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
         btnSubmit.setOnClickListener(view -> {
             String location = initialInput.getText().toString();
             locationHandler.addLocationViaText(location);
-            locationHandler.deleteDbEntry("Lohne, Landkreis Vechta, Niedersachsen, 49393, Deutschland");
         });
     }
 }
