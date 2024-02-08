@@ -70,9 +70,9 @@ public class LocationHandler {
         return db.locationDAO().getAllByExactNames();
     }
 
-    public void deleteDbEntry(Location toDelete){
+    public void deleteDbEntry(String toDelete){
         new Thread(() -> {
-            db.locationDAO().deleteEntry(toDelete.getExactName());
+            db.locationDAO().deleteEntry(toDelete);
         }).start();
     }
 }
