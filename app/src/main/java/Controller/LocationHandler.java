@@ -10,6 +10,7 @@ import java.util.concurrent.CountDownLatch;
 
 import Model.AppDatabase;
 import Model.Location;
+import Model.WeatherFetcher;
 
 //Erik Witte
 public class LocationHandler {
@@ -41,6 +42,8 @@ public class LocationHandler {
                 // genau eine Stadt entspricht der Suche
                 if (matchingLocations.size() == 1) {
                     addLocationToDb(matchingLocations.get(0));
+                    WeatherFetcher test = new WeatherFetcher();
+                    Log.i("est", test.getCurrentWeather(matchingLocations.get(0).getLatitude(), matchingLocations.get(0).getLongitude()));
                     return matchingLocations;
                 }
                 // mehrere Städte passen, eine muss ausgewählt werden

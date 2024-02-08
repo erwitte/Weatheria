@@ -39,11 +39,13 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
             String queryUrl = "https://nominatim.openstreetmap.org/search?city=" + desiredLocation + "&format=json";
 
             URL url = new URL(queryUrl);
+            // baut verbindung zu api auf
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
             //API verlangt User Agent
             urlConnection.setRequestProperty("User-Agent", "Weatheria");
 
+            // liest antwort der api zeile für zeile
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()))) {
                 StringBuilder response = new StringBuilder();
                 String line;
