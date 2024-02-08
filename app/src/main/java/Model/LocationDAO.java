@@ -11,8 +11,8 @@ public interface LocationDAO {
     @Insert
     void insert(Location location);
 
-    @Query("SELECT * FROM Location")
-    List<Location> getAllLocations();
+    @Query("SELECT exactName FROM Location")
+    List<String> getAllByExactNames();
 
     @Query("SELECT exactName FROM Location WHERE exactName like :exactName")
     String getSameExactName(String exactName);

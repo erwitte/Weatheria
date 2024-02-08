@@ -68,8 +68,8 @@ public class LocationHandler {
         }).start();
     }
 
-    public List<Location> getDbEntries(){
-        return db.locationDAO().getAllLocations();
+    public List<String> getDbEntries(){
+        return db.locationDAO().getAllByExactNames();
     }
 
     public void deleteDbEntry(Location toDelete){
