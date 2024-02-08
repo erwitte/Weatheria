@@ -19,6 +19,7 @@ public class LocationHandler {
 
     //
     public LocationHandler(Context context){
+        //da nur einmal initialisiert und keine große operation wird auf main thread ausgeführt
         db = Room.databaseBuilder(context.getApplicationContext(),
                 AppDatabase.class, "Location").allowMainThreadQueries().build();
     }
@@ -36,7 +37,7 @@ public class LocationHandler {
         List<Location> es = db.locationDAO().getAllLocations();
         new Thread(() -> {
             for (Location a : es) {
-                Log.i("Ergebnis", a.getName());
+                Log.i("DB", a.getName());
             }
         }).start();
         test.execute(newLocation);
