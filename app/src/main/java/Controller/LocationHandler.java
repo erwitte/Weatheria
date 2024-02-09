@@ -10,6 +10,7 @@ import java.util.concurrent.CountDownLatch;
 
 import Model.AppDatabase;
 import Model.Location;
+import Model.LocationToCoords;
 import Model.WeatherFetcher;
 
 //Erik Witte
