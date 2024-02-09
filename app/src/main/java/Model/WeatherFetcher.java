@@ -18,12 +18,13 @@ public class WeatherFetcher {
     public String getCurrentWeather(double latitude, double longitude){
         String queryUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(latitude)
                 + "&lon=" + Double.toString(longitude) + apiKey;
+        // stellt nicht das aktuelle datum
         return getApiData(queryUrl);
     }
 
     public String get5Days(double latitude, double longitude){
-        String queryUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + Double.toString(latitude) + "&lon="
-                + Double.toString(longitude) + apiKey;
+        String queryUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon="
+                + longitude + apiKey;
         return getApiData(queryUrl);
     }
 
