@@ -45,8 +45,6 @@ public class LocationHandler {
                 // genau eine Stadt entspricht der Suche
                 if (matchingLocations.size() == 1) {
                     addLocationToDb(matchingLocations.get(0));
-                    WeatherFetcher e = new WeatherFetcher();
-                    JSONArray ws = e.getThreeDaysWeather();
                     return matchingLocations;
                 }
                 // mehrere Städte passen, eine muss ausgewählt werden

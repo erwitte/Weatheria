@@ -85,7 +85,7 @@ public class WeatherFetcher {
         }
     }
 
-    public JSONArray getTodaysWeather(){
+    public JSONArray getTodaysWeather(double latitude, double longitude){
         // aktuelles Datum beziehen,
         //generiert mit Prompt how to get localdate and only the date
         LocalDate currentDate = LocalDate.now();
@@ -93,7 +93,7 @@ public class WeatherFetcher {
         String formattedDate = currentDate.format(formatter);
         //generiert ende
 
-        JSONArray completeWeatherArray = get5DaysJson(52.2719595, 8.047635);
+        JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();
 
         try{
@@ -115,13 +115,13 @@ public class WeatherFetcher {
 
     }
 
-    public JSONArray getTomorrowsWeather(){
+    public JSONArray getTomorrowsWeather(double latitude, double longitude){
         LocalDate today = LocalDate.now();
         LocalDate tomorrow = today.plusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = tomorrow.format(formatter);
 
-        JSONArray completeWeatherArray = get5DaysJson(52.2719595, 8.047635);
+        JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();
 
         try{
@@ -143,13 +143,13 @@ public class WeatherFetcher {
         return weatherArray;
     }
 
-    public JSONArray getThreeDaysWeather(){
+    public JSONArray getThreeDaysWeather(double latitude, double longitude){
         LocalDate today = LocalDate.now();
         LocalDate dayAfterTomorrow = today.plusDays(2);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = dayAfterTomorrow.format(formatter);
 
-        JSONArray completeWeatherArray = get5DaysJson(52.2719595, 8.047635);
+        JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();
 
         try{
