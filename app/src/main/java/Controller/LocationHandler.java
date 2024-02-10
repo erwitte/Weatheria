@@ -46,7 +46,7 @@ public class LocationHandler {
                 if (matchingLocations.size() == 1) {
                     addLocationToDb(matchingLocations.get(0));
                     WeatherFetcher e = new WeatherFetcher();
-                    JSONArray ws = e.getToday();
+                    JSONArray ws = e.getThreeDaysWeather();
                     return matchingLocations;
                 }
                 // mehrere Städte passen, eine muss ausgewählt werden

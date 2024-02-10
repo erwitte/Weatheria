@@ -23,8 +23,8 @@ public class WeatherFetcher {
 
     // stellt nicht das aktuelle datum
     public JSONObject getCurrentWeather(double latitude, double longitude){
-        String queryUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + Double.toString(latitude)
-                + "&lon=" + Double.toString(longitude) + apiKey;
+        String queryUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude
+                + "&lon=" + longitude + apiKey;
         String apiResponse = getApiData(queryUrl);
         if (apiResponse != null){
             try{
@@ -37,7 +37,7 @@ public class WeatherFetcher {
     }
 
     // return 5 days forecast split into 3h parts
-    public JSONArray get5Days(double latitude, double longitude){
+    private JSONArray get5DaysJson(double latitude, double longitude){
         String queryUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon="
                 + longitude + apiKey;
         String apiResponse = getApiData(queryUrl);
@@ -85,10 +85,7 @@ public class WeatherFetcher {
         }
     }
 
-    public JSONArray getToday(){
-        JSONArray weatherArray = get5Days(52.2719595, 8.047635);
-        JSONArray todaysWeatherArray = new JSONArray();
-
+    public JSONArray getTodaysWeather(){
         // aktuelles Datum beziehen,
         //generiert mit Prompt how to get localdate and only the date
         LocalDate currentDate = LocalDate.now();
@@ -96,20 +93,91 @@ public class WeatherFetcher {
         String formattedDate = currentDate.format(formatter);
         //generiert ende
 
-        // erhöht performance
+        JSONArray completeWeatherArray = get5DaysJson(52.2719595, 8.047635);
+        JSONArray weatherArray = new JSONArray();
+
         try{
-            int weatherArrayLength = weatherArray.length();
-            for (int forecastSlot=0; forecastSlot < weatherArrayLength; forecastSlot++) {
-                JSONObject jsonObject = weatherArray.getJSONObject(forecastSlot);
+            int upToDateInt = parseDateToInt(formattedDate);
+            // erhöht performance
+            int completeWeatherArrayLength = completeWeatherArray.length();
+            for (int forecastSlot=0; forecastSlot < completeWeatherArrayLength; forecastSlot++) {
+                JSONObject jsonObject = completeWeatherArray.getJSONObject(forecastSlot);
                 String[] dateInJson = jsonObject.getString("dt_txt").split(" ");
-                if (formattedDate.equals(dateInJson[0])){
-                    todaysWeatherArray.put(weatherArray.getJSONObject(forecastSlot));
+                if (parseDateToInt(dateInJson[0]) <= upToDateInt){
+                    weatherArray.put(completeWeatherArray.getJSONObject(forecastSlot));
                 } else
-                    forecastSlot += weatherArrayLength;
+                    forecastSlot += completeWeatherArrayLength;
             }
         } catch(JSONException e){
             Log.e("JSONParseError", "weatherFetcher getToday", e);
         }
-        return todaysWeatherArray;
+        return weatherArray;
+
+    }
+
+    public JSONArray getTomorrowsWeather(){
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = tomorrow.format(formatter);
+
+        JSONArray completeWeatherArray = get5DaysJson(52.2719595, 8.047635);
+        JSONArray weatherArray = new JSONArray();
+
+        try{
+            int dateToCompareTo = parseDateToInt(formattedDate);
+            // erhöht performance
+            int completeWeatherArrayLength = completeWeatherArray.length();
+            for (int forecastSlot=0; forecastSlot < completeWeatherArrayLength; forecastSlot++) {
+                JSONObject jsonObject = completeWeatherArray.getJSONObject(forecastSlot);
+                String[] dateInJson = jsonObject.getString("dt_txt").split(" ");
+                if (parseDateToInt(dateInJson[0]) == dateToCompareTo){
+                    weatherArray.put(completeWeatherArray.getJSONObject(forecastSlot));
+                } else if (parseDateToInt(dateInJson[0]) > dateToCompareTo){
+                    forecastSlot += completeWeatherArrayLength;
+                }
+            }
+        } catch(JSONException e){
+            Log.e("JSONParseError", "weatherFetcher getToday", e);
+        }
+        return weatherArray;
+    }
+
+    public JSONArray getThreeDaysWeather(){
+        LocalDate today = LocalDate.now();
+        LocalDate dayAfterTomorrow = today.plusDays(2);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = dayAfterTomorrow.format(formatter);
+
+        JSONArray completeWeatherArray = get5DaysJson(52.2719595, 8.047635);
+        JSONArray weatherArray = new JSONArray();
+
+        try{
+            int dateToCompareTo = parseDateToInt(formattedDate);
+            // erhöht performance
+            int completeWeatherArrayLength = completeWeatherArray.length();
+            for (int forecastSlot=0; forecastSlot < completeWeatherArrayLength; forecastSlot++) {
+                JSONObject jsonObject = completeWeatherArray.getJSONObject(forecastSlot);
+                String[] dateInJson = jsonObject.getString("dt_txt").split(" ");
+                if (parseDateToInt(dateInJson[0]) <= dateToCompareTo){
+                    weatherArray.put(completeWeatherArray.getJSONObject(forecastSlot));
+                } else {
+                    forecastSlot += completeWeatherArrayLength;
+                }
+            }
+        } catch(JSONException e){
+            Log.e("JSONParseError", "weatherFetcher getToday", e);
+        }
+        return weatherArray;
+    }
+
+    // macht alle Daten einschließlich Jahreswechsel vergleichbar
+    private int parseDateToInt(String date){
+        String[] splitDate = date.split("-");
+        int day = Integer.parseInt(splitDate[2]);
+        int month = Integer.parseInt(splitDate[1]);
+        int year = Integer.parseInt(splitDate[0]);
+
+        return year * 1000 + month * 100 + day;
     }
 }
