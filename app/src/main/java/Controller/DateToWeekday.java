@@ -20,5 +20,6 @@ public class DateToWeekday {
         LocalDate date = dateTime.toLocalDate();
 
         return date.getDayOfWeek().getDisplayName(java.time.format.TextStyle.FULL, Locale.GERMAN);
+        //generiet ende
     }
 }

@@ -55,7 +55,7 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
                 stringFromJson = response.toString();
                 if (stringFromJson != null) {
                     try {
-                        // JSON Antwort parsen
+                        // API Antwort zu JSON umwandeln und einen index pro datenblock zuteilen
                         JSONArray jsonArray = new JSONArray(stringFromJson);
                         if (jsonArray.length() > 0) {
                             // Locations aus JSON filtern und jeweils Objekte erzeugen

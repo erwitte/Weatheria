@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.room.Room;
 
+import org.json.JSONArray;
+
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
@@ -43,8 +45,8 @@ public class LocationHandler {
                 // genau eine Stadt entspricht der Suche
                 if (matchingLocations.size() == 1) {
                     addLocationToDb(matchingLocations.get(0));
-                    WeatherFetcher test = new WeatherFetcher();
-                    Log.i("est", test.getCurrentWeather(matchingLocations.get(0).getLatitude(), matchingLocations.get(0).getLongitude()));
+                    WeatherFetcher e = new WeatherFetcher();
+                    JSONArray ws = e.getToday();
                     return matchingLocations;
                 }
                 // mehrere Städte passen, eine muss ausgewählt werden
