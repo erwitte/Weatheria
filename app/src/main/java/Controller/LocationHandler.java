@@ -83,4 +83,8 @@ public class LocationHandler {
     public CountDownLatch getLatch(){
         return latch;
     }
+
+    public List<Location> getAll(){
+        return db.locationDAO().getAll();
+    }
 }
