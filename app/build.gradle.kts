@@ -42,4 +42,8 @@ dependencies {
 
     implementation("androidx.room:room-runtime:2.4.2")
     annotationProcessor("androidx.room:room-compiler:2.4.2")
+
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation("com.google.android.exoplayer:exoplayer-core:2.19.1")
+    implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
 }

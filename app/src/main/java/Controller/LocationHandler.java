@@ -5,20 +5,17 @@ import android.util.Log;
 
 import androidx.room.Room;
 
-import org.json.JSONArray;
-
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import Model.AppDatabase;
 import Model.Location;
 import Model.LocationToCoords;
-import Model.WeatherFetcher;
 
 //Erik Witte
 public class LocationHandler {
 
-    private AppDatabase db;
+    final private AppDatabase db;
     CountDownLatch latch = new CountDownLatch(1);
 
     //
@@ -78,10 +75,6 @@ public class LocationHandler {
         new Thread(() -> {
             db.locationDAO().deleteEntry(toDelete);
         }).start();
-    }
-
-    public CountDownLatch getLatch(){
-        return latch;
     }
 
     public List<Location> getAll(){
