@@ -27,29 +27,28 @@ public class LayoutManager{
     }
 
     public void initialStart(){
-        clearLayout();
+        initialFillLayout();
         this.searchWindow.createSearchWindow();
     }
-    public void updateLayout(List<View> newViews) {
+
+    public void updateLayout(List<View> newViews, int childCount) {
+        removeLastChildren(childCount);
         for(View v : newViews)
             this.gridLayout.addView(v);
     }
 
-    public void searchInitiated(String toSearch) {
+    public void searchInitiated(String toSearch, int childCount) {
         matchingLocations = locationHandler.addLocationViaText(toSearch);
         if (matchingLocations.size() == 1){
             Log.i("jaf", matchingLocations.get(0).getExactName());
         } else if (matchingLocations.size() > 1){
-            gridLayout.removeAllViews();
-            clearLayout();
             ChooseFromMultiple chooseFromMultiple = new ChooseFromMultiple(matchingLocations, this, gridLayout.getContext());
             List<View> chooseLoc = chooseFromMultiple.createChooseLoc();
-            for (View v : chooseLoc)
-                gridLayout.addView(v);
+            updateLayout(chooseLoc, childCount);
         }
     }
 
-    public void clearLayout(){
+    public void initialFillLayout(){
         for (int row = 0; row < 100; row++) {
             for (int col = 0; col < 34; col++) {
                 View view = new View(gridLayout.getContext());
@@ -79,6 +78,15 @@ public class LayoutManager{
                 // todo wetter ding hier
                 break;
             }
+        }
+    }
+
+    private void removeLastChildren(int toRemove){
+        // getChildCount ändert sich wenn views entfernt werden
+        int currentChildCount = gridLayout.getChildCount();
+        for (int lastChild=0; lastChild<toRemove; lastChild++){
+            View t = gridLayout.getChildAt(gridLayout.getChildCount() - 1 - lastChild);
+            gridLayout.removeViewAt(currentChildCount - 1 - lastChild);
         }
     }
 }

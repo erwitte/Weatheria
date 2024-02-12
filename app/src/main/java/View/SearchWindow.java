@@ -16,14 +16,13 @@ public class SearchWindow {
     //opacity of .8
     private String hexColor = "#99FFFFFF";
     private List<View>  viewList;
-    private List<Integer> idList;
     private Context context;
     private ChooseFromDb chooseFromDb;
+    private int childCount = 0;
     public SearchWindow(LayoutManager layoutManager, Context context){
         this.layoutManager = layoutManager;
         this.viewList = new ArrayList<>();
         this.context = context;
-        this.idList = new ArrayList<>();
         this.chooseFromDb = new ChooseFromDb(layoutManager, context);
     }
 
@@ -32,7 +31,7 @@ public class SearchWindow {
         viewList.add(createSearchBtn());
         viewList.add(createDbBtn());
         viewList.add(createGpsBtn());
-        layoutManager.updateLayout(viewList);
+        layoutManager.updateLayout(viewList, -1);
     }
 
     private EditText createSearchField(){
@@ -42,13 +41,14 @@ public class SearchWindow {
 
         GridLayout.LayoutParams paramsEditText = new GridLayout.LayoutParams();
         paramsEditText.width = 0; // Use GridLayout.LayoutParams.MATCH_PARENT if you want fixed sizes instead of weights
-        paramsEditText.height = 0; // Use GridLayout.LayoutParams.MATCH_PARENT if you want fixed sizes instead of weights
+        paramsEditText.height = 0;
         paramsEditText.rowSpec = GridLayout.spec(20, 5, 1f);
         paramsEditText.columnSpec = GridLayout.spec(6, 20, 1f);
         paramsEditText.setMargins(0, 0, 0, 0);
 
         searchField.setLayoutParams(paramsEditText);
-        idList.add(searchField.getId());
+
+        childCount++;
         return searchField;
     }
 
@@ -63,13 +63,14 @@ public class SearchWindow {
         params.columnSpec = GridLayout.spec(12, 8, 1f);
         params.setMargins(0,0,0,0);
         searchBtn.setLayoutParams(params);
-        idList.add(searchBtn.getId());
 
         searchBtn.setOnClickListener(view -> {
             EditText edit = (EditText) viewList.get(0);
             String input = edit.getText().toString();
-            layoutManager.searchInitiated(input);
+            layoutManager.searchInitiated(input, childCount);
         });
+
+        childCount++;
         return searchBtn;
     }
 
@@ -84,14 +85,12 @@ public class SearchWindow {
         params.columnSpec = GridLayout.spec(3, 10, 1f);
         params.setMargins(0,0,0,0);
         dbBtn.setLayoutParams(params);
-        idList.add(dbBtn.getId());
 
         dbBtn.setOnClickListener(view -> {
-            layoutManager.getGridLayout().removeAllViews();
-            layoutManager.clearLayout();
-            for(View v : chooseFromDb.getDbView())
-                layoutManager.getGridLayout().addView(v);
+            layoutManager.updateLayout(chooseFromDb.getDbView(), childCount);
         });
+
+        childCount++;
         return dbBtn;
     }
 
@@ -106,7 +105,8 @@ public class SearchWindow {
         params.columnSpec = GridLayout.spec(20, 10, 1f);
         params.setMargins(0,0,0,0);
         gpsBtn.setLayoutParams(params);
-        idList.add(gpsBtn.getId());
+
+        childCount++;
         return gpsBtn;
     }
 }
