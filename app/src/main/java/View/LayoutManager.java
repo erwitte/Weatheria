@@ -19,7 +19,7 @@ public class LayoutManager{
     public LayoutManager(GridLayout gridLayout){
         this.gridLayout = gridLayout;
         this.searchWindow = new SearchWindow(this, gridLayout.getContext());
-        locationHandler = new LocationHandler(gridLayout.getContext());
+        this.locationHandler = new LocationHandler(gridLayout.getContext());
     }
 
     public GridLayout getGridLayout(){
@@ -45,7 +45,8 @@ public class LayoutManager{
     public void searchInitiated(String toSearch, int childCount) {
         matchingLocations = locationHandler.addLocationViaText(toSearch);
         if (matchingLocations.size() == 1){
-            Log.i("jaf", matchingLocations.get(0).getExactName());
+            Forecast forecast = new Forecast(gridLayout.getContext(), this, matchingLocations.get(0));
+            updateLayout(forecast.getForecastView(), childCount);
         } else if (matchingLocations.size() > 1){
             ChooseFromMultiple chooseFromMultiple = new ChooseFromMultiple(matchingLocations, this, gridLayout.getContext());
             List<View> chooseLoc = chooseFromMultiple.createChooseLoc();

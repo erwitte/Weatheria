@@ -38,10 +38,9 @@ public class SearchWindow {
     private EditText createSearchField(){
         EditText searchField = new EditText(context);
         searchField.setBackgroundColor(Color.parseColor(hexColor));
-        searchField.setId(View.generateViewId());
 
         GridLayout.LayoutParams paramsEditText = new GridLayout.LayoutParams();
-        paramsEditText.width = 0; // Use GridLayout.LayoutParams.MATCH_PARENT if you want fixed sizes instead of weights
+        paramsEditText.width = 0;
         paramsEditText.height = 0;
         paramsEditText.rowSpec = GridLayout.spec(20, 5, 1f);
         paramsEditText.columnSpec = GridLayout.spec(6, 20, 1f);
@@ -69,7 +68,6 @@ public class SearchWindow {
             EditText edit = (EditText) viewList.get(0);
             String input = edit.getText().toString();
             edit.getText().clear();
-            Log.i("edit", input);
             viewList.clear();
             layoutManager.searchInitiated(input, childCount);
             childCount = 0;

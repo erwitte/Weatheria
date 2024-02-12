@@ -77,7 +77,7 @@ public class LocationHandler {
         }).start();
     }
 
-    public List<Location> getAll(){
-        return db.locationDAO().getAll();
+    public Location getEntry(String exactName){
+        return db.locationDAO().getEntry(exactName);
     }
 }

@@ -117,16 +117,17 @@ public class WeatherFetcher {
 
     public JSONArray getTomorrowsWeather(double latitude, double longitude){
         LocalDate today = LocalDate.now();
+        // generiert
         LocalDate tomorrow = today.plusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = tomorrow.format(formatter);
+        // generiert
 
         JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();
 
         try{
             int dateToCompareTo = parseDateToInt(formattedDate);
-            // erhöht performance
             int completeWeatherArrayLength = completeWeatherArray.length();
             for (int forecastSlot=0; forecastSlot < completeWeatherArrayLength; forecastSlot++) {
                 JSONObject jsonObject = completeWeatherArray.getJSONObject(forecastSlot);
@@ -145,16 +146,17 @@ public class WeatherFetcher {
 
     public JSONArray getThreeDaysWeather(double latitude, double longitude){
         LocalDate today = LocalDate.now();
+        // generiert
         LocalDate dayAfterTomorrow = today.plusDays(2);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = dayAfterTomorrow.format(formatter);
+        // generiert
 
         JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();
 
         try{
             int dateToCompareTo = parseDateToInt(formattedDate);
-            // erhöht performance
             int completeWeatherArrayLength = completeWeatherArray.length();
             for (int forecastSlot=0; forecastSlot < completeWeatherArrayLength; forecastSlot++) {
                 JSONObject jsonObject = completeWeatherArray.getJSONObject(forecastSlot);
