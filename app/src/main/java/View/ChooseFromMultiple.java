@@ -55,7 +55,7 @@ public class ChooseFromMultiple {
         table.setLayoutParams(params);
 
         table.setOnItemClickListener((parent, view, position, id) -> {
-            layoutManager.choiceMade(arrayExactNames[position]);
+            layoutManager.choiceMade(arrayExactNames[position], childCount);
         });
 
         childCount++;

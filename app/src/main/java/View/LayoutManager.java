@@ -22,10 +22,6 @@ public class LayoutManager{
         this.locationHandler = new LocationHandler(gridLayout.getContext());
     }
 
-    public GridLayout getGridLayout(){
-        return this.gridLayout;
-    }
-
     public void initialStart(){
         initialFillLayout();
         this.searchWindow.createSearchWindow();
@@ -77,14 +73,21 @@ public class LayoutManager{
         }
     }
 
-    public void choiceMade(String chosenLocation){
+    public void choiceMade(String chosenLocation, int childCount){
         for (Location loc : matchingLocations){
             if (loc.getExactName().equals(chosenLocation)){
                 locationHandler.addLocationToDb(loc);
-                // todo wetter ding hier
+                Forecast forecast = new Forecast(gridLayout.getContext(), this, loc);
+                updateLayout(forecast.getForecastView(), childCount);
                 break;
             }
         }
+    }
+
+    public void chosenFromDb(String exactNamen, int childCount){
+        Location loc = locationHandler.getEntry(exactNamen);
+        Forecast forecast = new Forecast(gridLayout.getContext(), this, loc);
+        updateLayout(forecast.getForecastView(), childCount);
     }
 
     private void removeLastChildren(int toRemove){

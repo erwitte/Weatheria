@@ -60,8 +60,12 @@ public class Forecast {
     public List<View> getForecastView(){
         List<View> forecastView = new ArrayList<>();
         forecastView.add(createBackBtn());
+        forecastView.add(createFahrenheitBtn());
 
         for (View v : createCurrentWeather())
+            forecastView.add(v);
+
+        for (View v : createChoiceBtns())
             forecastView.add(v);
         return forecastView;
     }
@@ -85,7 +89,7 @@ public class Forecast {
         return backBtn;
     }
 
-    private Button switchFahrenheitBtn(){
+    private Button createFahrenheitBtn(){
         Button fahrenheitBtn = new Button(context);
         fahrenheitBtn.setText("Fahrenheit");
 
@@ -93,13 +97,18 @@ public class Forecast {
         params.width = 0;
         params.height = 0;
         params.rowSpec = GridLayout.spec(0, 7, 1f);
-        params.columnSpec = GridLayout.spec(24, 10, 1f);
+        params.columnSpec = GridLayout.spec(0, 11, 1f);
         params.setMargins(0,0,0,0);
         fahrenheitBtn.setLayoutParams(params);
 
         fahrenheitBtn.setOnClickListener(view -> {
-            isFahrenheit = true;
-            fahrenheitBtn.setText("Celsius");
+            if (!isFahrenheit) {
+                fahrenheitBtn.setText("Celsius");
+                isFahrenheit = true;
+            } else {
+                fahrenheitBtn.setText("Fahrenheit");
+                isFahrenheit = false;
+            }
         });
         childCount++;
         return fahrenheitBtn;
@@ -116,28 +125,33 @@ public class Forecast {
     }
 
     private List<View> createCurrentWeather(){
+        // eine methode da für alles andere api genutzt wird
         JSONObject currentWeather = weatherFetcher.getCurrentWeather(location.getLatitude(), location.getLongitude());
         List<View> toReturn = new ArrayList<>();
+
+        // Name des angezeigten Ortes
         TextView locationName = new TextView(context);
         locationName.setText(location.getName());
         GridLayout.LayoutParams paramsName = new GridLayout.LayoutParams();
         paramsName.width = 0;
         paramsName.height = 0;
         paramsName.rowSpec = GridLayout.spec(2, 4, 1f);
-        paramsName.columnSpec = GridLayout.spec(12, 10, 1f);
+        paramsName.columnSpec = GridLayout.spec(15, 10, 1f);
         paramsName.setMargins(0,0,0,0);
         locationName.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         locationName.setTextColor(Color.BLACK);
         locationName.setLayoutParams(paramsName);
+        childCount++;
         toReturn.add(locationName);
 
+        //Temperatur am Ort
         TextView locationTemp = new TextView(context);
         try {
             double kelvin = currentWeather.getJSONObject("main").getDouble("temp");
             if (isFahrenheit == false)
-                locationTemp.setText(Double.toString(kelvinToCelsius(kelvin)));
+                locationTemp.setText(Double.toString(kelvinToCelsius(kelvin)) + " °C");
             else
-                locationTemp.setText(Double.toString(kelvingToFahrenheit(kelvin)));
+                locationTemp.setText(Double.toString(kelvingToFahrenheit(kelvin)) + " °F");
         } catch (JSONException e){
             Log.e("JSONError", "fetching temperature", e);
             locationTemp.setText("----");
@@ -146,23 +160,26 @@ public class Forecast {
         paramsTemp.width = 0;
         paramsTemp.height = 0;
         paramsTemp.rowSpec = GridLayout.spec(6, 5, 1f);
-        paramsTemp.columnSpec = GridLayout.spec(13, 6, 1f);
+        paramsTemp.columnSpec = GridLayout.spec(15, 6, 1f);
         paramsTemp.setMargins(0,0,0,0);
         locationTemp.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         locationTemp.setTextColor(Color.BLACK);
         locationTemp.setLayoutParams(paramsTemp);
+        childCount++;
         toReturn.add(locationTemp);
 
+        // passendes icon zum wetter am ort
         ImageView weatherIcon = chooseIcon(currentWeather);
         GridLayout.LayoutParams paramsIcon = new GridLayout.LayoutParams();
         paramsIcon.width = 150;
         paramsIcon.height = 150;
         paramsIcon.rowSpec = GridLayout.spec(11, 2, 1f);
-        paramsIcon.columnSpec = GridLayout.spec(12, 2, 1f);
+        paramsIcon.columnSpec = GridLayout.spec(15, 2, 1f);
         paramsIcon.setMargins(0,0,0,0);
         weatherIcon.setLayoutParams(paramsIcon);
 
         toReturn.add(weatherIcon);
+        childCount++;
         return toReturn;
     }
 
@@ -209,5 +226,58 @@ public class Forecast {
             Log.e("JSONError", "forecast.chooseIcon", e);
         }
         return null;
+    }
+
+    private List<Button> createChoiceBtns(){
+        List<Button> btnList = new ArrayList<>();
+        btnList.add(createTodayBtn());
+        btnList.add(createTomorrowBtn());
+        btnList.add(create3DaysBtn());
+        return btnList;
+    }
+
+    private Button createTodayBtn(){
+        Button todayBtn = new Button(context);
+        todayBtn.setText("heute");
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(18, 7, 1f);
+        params.columnSpec = GridLayout.spec(1, 10, 1f);
+        params.setMargins(0,0,0,0);
+        todayBtn.setLayoutParams(params);
+        childCount++;
+        return todayBtn;
+    }
+
+    private Button createTomorrowBtn(){
+        Button tomorrowBtn = new Button(context);
+        tomorrowBtn.setText("morgen");
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(18, 7, 1f);
+        params.columnSpec = GridLayout.spec(12, 10, 1f);
+        params.setMargins(0,0,0,0);
+        tomorrowBtn.setLayoutParams(params);
+        childCount++;
+        return tomorrowBtn;
+    }
+
+    private Button create3DaysBtn(){
+        Button threeDaysBtn = new Button(context);
+        threeDaysBtn.setText("3 Tage");
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(18, 7, 1f);
+        params.columnSpec = GridLayout.spec(23, 10, 1f);
+        params.setMargins(0,0,0,0);
+        threeDaysBtn.setLayoutParams(params);
+        childCount++;
+        return threeDaysBtn;
     }
 }

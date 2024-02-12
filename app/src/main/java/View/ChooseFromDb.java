@@ -126,7 +126,7 @@ public class ChooseFromDb {
 
     private void createListeners(ListView table){
         table.setOnItemClickListener((parent, view, position, id) -> {
-            //layoutManager.choiceMade(locationHandler.getDbEntries().get(position));
+            layoutManager.chosenFromDb(locationHandler.getDbEntries().get(position), childCount);
             Log.i("great", "success");
         });
 
