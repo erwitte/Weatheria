@@ -20,6 +20,7 @@ public class ChooseFromDb {
     private LayoutManager layoutManager;
     private Context context;
     private LocationHandler locationHandler;
+    private int childCount = 0;
 
     public ChooseFromDb(LayoutManager layoutManager, Context context){
         this.context = context;
@@ -52,6 +53,7 @@ public class ChooseFromDb {
             Log.i("oijesaf", locationHandler.getDbEntries().get(position));
         });
 
+        childCount++;
         return table;
     }
 
@@ -69,6 +71,8 @@ public class ChooseFromDb {
         params.columnSpec = GridLayout.spec(11, 10, 1f);
         params.setMargins(0,0,0,0);
         text.setLayoutParams(params);
+
+        childCount++;
         return text;
     }
 }

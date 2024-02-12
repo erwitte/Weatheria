@@ -31,6 +31,11 @@ public class LayoutManager{
         this.searchWindow.createSearchWindow();
     }
 
+    public void goBack(int childCount){
+        removeLastChildren(childCount);
+        this.searchWindow.createSearchWindow();
+    }
+
     public void updateLayout(List<View> newViews, int childCount) {
         removeLastChildren(childCount);
         for(View v : newViews)

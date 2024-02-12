@@ -67,6 +67,7 @@ public class SearchWindow {
         searchBtn.setOnClickListener(view -> {
             EditText edit = (EditText) viewList.get(0);
             String input = edit.getText().toString();
+            edit.getText().clear();
             layoutManager.searchInitiated(input, childCount);
         });
 

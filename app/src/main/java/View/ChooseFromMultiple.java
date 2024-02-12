@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ public class ChooseFromMultiple {
     private Context context;
     private String[] arrayExactNames;
     private int countLocations;
+    private int childCount = 0;
 
     public ChooseFromMultiple(List<Location> locationList, LayoutManager layoutManager, Context context){
         this.locationList = locationList;
@@ -34,6 +36,7 @@ public class ChooseFromMultiple {
         List<View> newViews = new ArrayList<>();
         newViews.add(createText());;
         newViews.add(createTable());
+        newViews.add(createBackBtn());
         return newViews;
     }
 
@@ -55,6 +58,7 @@ public class ChooseFromMultiple {
             layoutManager.choiceMade(arrayExactNames[position]);
         });
 
+        childCount++;
         return table;
     }
 
@@ -78,6 +82,27 @@ public class ChooseFromMultiple {
         params.columnSpec = GridLayout.spec(7, 20, 1f);
         params.setMargins(0,0,0,0);
         text.setLayoutParams(params);
+
+        childCount++;
         return text;
+    }
+
+    private Button createBackBtn(){
+        Button backBtn = new Button(context);
+        backBtn.setText("zurück");
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(0, 7, 1f);
+        params.columnSpec = GridLayout.spec(24, 10, 1f);
+        params.setMargins(0,0,0,0);
+        backBtn.setLayoutParams(params);
+
+        backBtn.setOnClickListener(view -> {
+            layoutManager.goBack(childCount);
+        });
+        childCount++;
+        return backBtn;
     }
 }
