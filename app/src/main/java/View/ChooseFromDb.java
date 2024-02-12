@@ -1,6 +1,7 @@
 package View;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.util.Log;
 import android.util.TypedValue;
@@ -10,6 +11,10 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +39,7 @@ public class ChooseFromDb {
         dbViewList.add(createText());
         dbViewList.add(createTable());
         dbViewList.add(createBackBtn());
+        dbViewList.add(createInfoText());
         return dbViewList;
     }
 
@@ -56,6 +62,8 @@ public class ChooseFromDb {
         });
 
         childCount++;
+
+        createListeners(table);
         return table;
     }
 
@@ -95,5 +103,46 @@ public class ChooseFromDb {
         });
         childCount++;
         return backBtn;
+    }
+
+    private TextView createInfoText(){
+        TextView infoText = new TextView(context);
+        infoText.setText("Gedrückt halten zum löschen");
+        // sp skaliert mit bildschirmgröße
+        infoText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+        infoText.setTextColor(Color.BLACK);
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(85, 10, 1f);
+        params.columnSpec = GridLayout.spec(5, 22, 1f);
+        params.setMargins(0,0,0,0);
+        infoText.setLayoutParams(params);
+
+        childCount++;
+        return infoText;
+    }
+
+    private void createListeners(ListView table){
+        table.setOnItemClickListener((parent, view, position, id) -> {
+            //layoutManager.choiceMade(locationHandler.getDbEntries().get(position));
+            Log.i("great", "success");
+        });
+
+        table.setOnItemLongClickListener((parent, view, position, id) -> {
+            new AlertDialog.Builder(context)
+                    .setTitle("Löschen")
+                    .setMessage(locationHandler.getDbEntries().get(position) + " sicher löschen?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            locationHandler.deleteDbEntry(locationHandler.getDbEntries().get(position));
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, null)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+            return true;
+        });
     }
 }
