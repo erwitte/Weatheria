@@ -2,6 +2,7 @@ package View;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -68,7 +69,10 @@ public class SearchWindow {
             EditText edit = (EditText) viewList.get(0);
             String input = edit.getText().toString();
             edit.getText().clear();
+            Log.i("edit", input);
+            viewList.clear();
             layoutManager.searchInitiated(input, childCount);
+            childCount = 0;
         });
 
         childCount++;
