@@ -6,6 +6,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ public class ChooseFromDb {
         List<View> dbViewList = new ArrayList<>();
         dbViewList.add(createText());
         dbViewList.add(createTable());
+        dbViewList.add(createBackBtn());
         return dbViewList;
     }
 
@@ -74,5 +76,24 @@ public class ChooseFromDb {
 
         childCount++;
         return text;
+    }
+
+    private Button createBackBtn(){
+        Button backBtn = new Button(context);
+        backBtn.setText("zurück");
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(0, 7, 1f);
+        params.columnSpec = GridLayout.spec(24, 10, 1f);
+        params.setMargins(0,0,0,0);
+        backBtn.setLayoutParams(params);
+
+        backBtn.setOnClickListener(view -> {
+            layoutManager.goBack(childCount);
+        });
+        childCount++;
+        return backBtn;
     }
 }

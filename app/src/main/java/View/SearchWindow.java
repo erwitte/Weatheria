@@ -93,6 +93,8 @@ public class SearchWindow {
 
         dbBtn.setOnClickListener(view -> {
             layoutManager.updateLayout(chooseFromDb.getDbView(), childCount);
+            viewList.clear();
+            childCount = 0;
         });
 
         childCount++;
