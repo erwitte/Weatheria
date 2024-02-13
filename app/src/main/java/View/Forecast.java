@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.View;
 
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.caverock.androidsvg.SVG;
 import com.example.weatheria.R;
 
@@ -19,13 +22,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import Controller.DateToWeekday;
 import Controller.LocationHandler;
 import Model.Location;
-import Model.WeatherFetcher;
+import Controller.WeatherFetcher;
 
 public class Forecast {
 
@@ -67,6 +69,8 @@ public class Forecast {
 
         for (View v : createChoiceBtns())
             forecastView.add(v);
+
+        forecastView.add(getDailyForecast());
         return forecastView;
     }
 
@@ -279,5 +283,29 @@ public class Forecast {
         threeDaysBtn.setLayoutParams(params);
         childCount++;
         return threeDaysBtn;
+    }
+
+    private View getDailyForecast(){
+        RecyclerView dailyForecast = new RecyclerView(context);
+        DataExtractor extractor = new DataExtractor();
+
+        // form der recyclerview definieren und füllen
+        int spanCount = 3;
+        int spacing = 50;
+        dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
+        dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
+        MyAdapter adapter = new MyAdapter(extractor.extractData(weatherFetcher.getTodaysWeather(location.getLongitude(), location.getLongitude())));
+        dailyForecast.setAdapter(adapter);
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = GridLayout.LayoutParams.WRAP_CONTENT; // Or specific size in pixels
+        params.height = GridLayout.LayoutParams.WRAP_CONTENT; // Or specific size in pixels
+
+// Assuming the GridLayout has defined column and row counts
+        params.rowSpec = GridLayout.spec(40, 30); // Adjust rowIndex and rowSpan as needed
+        params.columnSpec = GridLayout.spec(0, 34); // Adjust columnIndex and columnSpan as needed
+
+        dailyForecast.setLayoutParams(params);
+        return dailyForecast;
     }
 }
