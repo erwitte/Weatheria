@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 
+import com.example.weatheria.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +56,7 @@ public class SearchWindow {
 
     private Button createSearchBtn(){
         Button searchBtn = new Button(context);
-        searchBtn.setText("suchen");
+        searchBtn.setText(context.getString(R.string.suchen));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -79,7 +81,7 @@ public class SearchWindow {
 
     private Button createDbBtn(){
         Button dbBtn = new Button(context);
-        dbBtn.setText("Datenbank");
+        dbBtn.setText(context.getString(R.string.datenbank));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;

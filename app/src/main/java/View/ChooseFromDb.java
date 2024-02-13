@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.example.weatheria.R;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -57,23 +59,19 @@ public class ChooseFromDb {
         params.setMargins(0,0,0,0);
         table.setLayoutParams(params);
 
-        table.setOnItemClickListener((parent, view, position, id) -> {
-            Log.i("oijesaf", locationHandler.getDbEntries().get(position));
-        });
-
         childCount++;
-
         createListeners(table);
         return table;
     }
 
     private TextView createText(){
         TextView text = new TextView(context);
-        text.setText("Datenbank");
+        text.setText(context.getString(R.string.datenbank));
         // sp skaliert mit bildschirmgröße
         text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
         text.setTextColor(Color.BLACK);
 
+        // festlegen der parameter im grid layout
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = GridLayout.LayoutParams.WRAP_CONTENT;
         params.height = GridLayout.LayoutParams.WRAP_CONTENT;
@@ -88,7 +86,7 @@ public class ChooseFromDb {
 
     private Button createBackBtn(){
         Button backBtn = new Button(context);
-        backBtn.setText("zurück");
+        backBtn.setText(context.getString(R.string.zurueck));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -107,7 +105,7 @@ public class ChooseFromDb {
 
     private TextView createInfoText(){
         TextView infoText = new TextView(context);
-        infoText.setText("Gedrückt halten zum löschen");
+        infoText.setText(context.getString(R.string.loeschen));
         // sp skaliert mit bildschirmgröße
         infoText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
         infoText.setTextColor(Color.BLACK);
@@ -131,8 +129,8 @@ public class ChooseFromDb {
 
         table.setOnItemLongClickListener((parent, view, position, id) -> {
             new AlertDialog.Builder(context)
-                    .setTitle("Löschen")
-                    .setMessage(locationHandler.getDbEntries().get(position) + " sicher löschen?")
+                    .setTitle(context.getString(R.string.nurloeschen))
+                    .setMessage(locationHandler.getDbEntries().get(position) + " " + context.getString(R.string.sicherloeschen))
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             locationHandler.deleteDbEntry(locationHandler.getDbEntries().get(position));

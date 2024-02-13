@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Weatheria</string>
+    <string name="suchen">suchen</string>
+    <string name="datenbank">Datenbank</string>
+    <string name="heute">heute</string>
+    <string name="morgen">morgen</string>
+    <string name="dreitage">3 Tage</string>
+    <string name="zurueck">zurück</string>
+    <string name="auswahl">Bitte auswählen</string>
+    <string name="loeschen">Gedrückt halten zum löschen</string>
+    <string name="nurloeschen">löschen</string>
+    <string name="sicherloeschen">sicher löschen</string>
 </resources>

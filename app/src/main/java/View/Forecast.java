@@ -76,7 +76,7 @@ public class Forecast {
 
     private Button createBackBtn(){
         Button backBtn = new Button(context);
-        backBtn.setText("zurück");
+        backBtn.setText(context.getString(R.string.zurueck));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -242,7 +242,7 @@ public class Forecast {
 
     private Button createTodayBtn(){
         Button todayBtn = new Button(context);
-        todayBtn.setText("heute");
+        todayBtn.setText(context.getString(R.string.heute));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -257,7 +257,7 @@ public class Forecast {
 
     private Button createTomorrowBtn(){
         Button tomorrowBtn = new Button(context);
-        tomorrowBtn.setText("morgen");
+        tomorrowBtn.setText(context.getString(R.string.morgen));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -272,7 +272,7 @@ public class Forecast {
 
     private Button create3DaysBtn(){
         Button threeDaysBtn = new Button(context);
-        threeDaysBtn.setText("3 Tage");
+        threeDaysBtn.setText(context.getString(R.string.dreitage));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -300,11 +300,11 @@ public class Forecast {
         dailyForecast.setAdapter(adapter);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = GridLayout.LayoutParams.WRAP_CONTENT; // Or specific size in pixels
-        params.height = GridLayout.LayoutParams.WRAP_CONTENT; // Or specific size in pixels
+        params.width = GridLayout.LayoutParams.WRAP_CONTENT;
+        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
 
-// Assuming the GridLayout has defined column and row counts
-        params.rowSpec = GridLayout.spec(40, 30);
+        // ohne weight bei rowSpec wird der obere teil gequetsch, weight bei columnSpec zerschiesst ui
+        params.rowSpec = GridLayout.spec(40, 30, 1f);
         params.columnSpec = GridLayout.spec(0, 34);
 
         dailyForecast.setLayoutParams(params);
@@ -314,7 +314,7 @@ public class Forecast {
 
     private List<String> calculateTempForecast(List<String> rawData){
         for (int i=0; i< rawData.size(); i = i+3){
-            rawData.set(i, String.valueOf(kelvinToCelsius(Double.parseDouble(rawData.get(i)))));
+            rawData.set(i, kelvinToCelsius(Double.parseDouble(rawData.get(i))) + " °C");
         }
         return rawData;
     }
