@@ -306,6 +306,7 @@ public class Forecast {
         params.columnSpec = GridLayout.spec(0, 34); // Adjust columnIndex and columnSpan as needed
 
         dailyForecast.setLayoutParams(params);
+        childCount++;
         return dailyForecast;
     }
 }
