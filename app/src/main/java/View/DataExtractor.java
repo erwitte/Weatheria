@@ -11,7 +11,7 @@ import java.util.List;
 
 public class DataExtractor {
     List<String> extractData(JSONArray weatherData){
-        // 3 indizes pro tag, temperatur, wetter(id), datum mit uhrzeit
+        // 3 indizes pro tag; temperatur, wetter(id), datum mit uhrzeit
         List<String> extractedData = new ArrayList<>();
 
         try {

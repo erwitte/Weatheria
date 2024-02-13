@@ -288,13 +288,15 @@ public class Forecast {
     private View getDailyForecast(){
         RecyclerView dailyForecast = new RecyclerView(context);
         DataExtractor extractor = new DataExtractor();
+        List<String> forecastData = extractor.extractData(weatherFetcher.getTodaysWeather(location.getLatitude(), location.getLongitude()));
+        forecastData = calculateTempForecast(forecastData);
 
         // form der recyclerview definieren und füllen
         int spanCount = 3;
         int spacing = 50;
         dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
         dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
-        MyAdapter adapter = new MyAdapter(extractor.extractData(weatherFetcher.getTodaysWeather(location.getLongitude(), location.getLongitude())));
+        MyAdapter adapter = new MyAdapter(forecastData);
         dailyForecast.setAdapter(adapter);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
@@ -302,11 +304,18 @@ public class Forecast {
         params.height = GridLayout.LayoutParams.WRAP_CONTENT; // Or specific size in pixels
 
 // Assuming the GridLayout has defined column and row counts
-        params.rowSpec = GridLayout.spec(40, 30); // Adjust rowIndex and rowSpan as needed
-        params.columnSpec = GridLayout.spec(0, 34); // Adjust columnIndex and columnSpan as needed
+        params.rowSpec = GridLayout.spec(40, 30);
+        params.columnSpec = GridLayout.spec(0, 34);
 
         dailyForecast.setLayoutParams(params);
         childCount++;
         return dailyForecast;
+    }
+
+    private List<String> calculateTempForecast(List<String> rawData){
+        for (int i=0; i< rawData.size(); i = i+3){
+            rawData.set(i, String.valueOf(kelvinToCelsius(Double.parseDouble(rawData.get(i)))));
+        }
+        return rawData;
     }
 }
