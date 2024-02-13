@@ -25,8 +25,11 @@ public class MainActivity extends AppCompatActivity {
         LayoutManager l = new LayoutManager(gridLayout);
         l.initialStart();
 
+        PlayerView playerView = findViewById(R.id.player_view);
+        VideoPlayer t = new VideoPlayer(this, playerView);
+        t.play();
         // Add the view to the GridLayout
-        initializePlayer();
+        //initializePlayer();
     }
 
     private void initializePlayer() {
