@@ -6,9 +6,10 @@
     <string name="morgen">morgen</string>
     <string name="dreitage">3 Tage</string>
     <string name="zurueck">zurück</string>
-    <string name="auswahl">Bitte auswählen</string>
-    <string name="loeschen">Gedrückt halten zum löschen</string>
+    <string name="auswahl">itte auswählen</string>
+    <string name="loeschen">gedrückt halten zum löschen</string>
     <string name="nurloeschen">löschen</string>
     <string name="sicherloeschen">sicher löschen</string>
     <string name="sprache">English</string>
+    <string name="keinergebnis">kein Ergebnis</string>
 </resources>

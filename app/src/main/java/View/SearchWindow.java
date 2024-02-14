@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.TextView;
 
 import com.example.weatheria.R;
 
@@ -92,9 +93,18 @@ public class SearchWindow {
             EditText edit = (EditText) viewList.get(0);
             String input = edit.getText().toString();
             edit.getText().clear();
-            viewList.clear();
-            layoutManager.searchInitiated(input, childCount);
-            childCount = 0;
+
+            TextView noResult = layoutManager.searchInitiated(input, childCount, context);
+            if (noResult == null) {
+                childCount = 0;
+                viewList.clear();
+            }
+            else{
+                List<View> necessaryList = new ArrayList<>();
+                necessaryList.add(noResult);
+                childCount++;
+                layoutManager.updateLayout(necessaryList, -1);
+            }
         });
 
         childCount++;

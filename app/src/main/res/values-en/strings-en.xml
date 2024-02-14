@@ -11,4 +11,5 @@
     <string name="nurloeschen">delete</string>
     <string name="sicherloeschen">really delete</string>
     <string name="sprache">Deutsch</string>
+    <string name="keinergebnis">no result</string>
 </resources>

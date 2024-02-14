@@ -1,9 +1,14 @@
 package View;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.GridLayout;
+import android.widget.TextView;
+
+import com.example.weatheria.R;
 
 import java.util.List;
 
@@ -40,7 +45,7 @@ public class LayoutManager{
             this.gridLayout.addView(v);
     }
 
-    public void searchInitiated(String toSearch, int childCount) {
+    public TextView searchInitiated(String toSearch, int childCount, Context context) {
         matchingLocations = locationHandler.addLocationViaText(toSearch);
         if (matchingLocations.size() == 1){
             Forecast forecast = new Forecast(gridLayout.getContext(), this, matchingLocations.get(0));
@@ -49,7 +54,19 @@ public class LayoutManager{
             ChooseFromMultiple chooseFromMultiple = new ChooseFromMultiple(matchingLocations, this, gridLayout.getContext());
             List<View> chooseLoc = chooseFromMultiple.createChooseLoc();
             updateLayout(chooseLoc, childCount);
+        } else if (matchingLocations.size() == 0){
+            TextView noResult = new TextView(context);
+            noResult.setTextColor(Color.parseColor("#dc071b"));
+            noResult.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            noResult.setText(context.getString(R.string.keinergebnis));
+
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.rowSpec = GridLayout.spec(10, 4, 1f);
+            params.columnSpec = GridLayout.spec(12, 10, 1f);
+            noResult.setLayoutParams(params);
+            return noResult;
         }
+        return null;
     }
 
     public void initialFillLayout(){
