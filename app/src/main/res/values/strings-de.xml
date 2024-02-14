@@ -12,4 +12,5 @@
     <string name="sicherloeschen">sicher löschen</string>
     <string name="sprache">English</string>
     <string name="keinergebnis">kein Ergebnis</string>
+    <string name="feuchtigkeit">Feuchtigkeit</string>
 </resources>

@@ -9,9 +9,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import Controller.DateToWeekday;
+
 public class DataExtractor {
     List<String> extractData(JSONArray weatherData){
-        // 3 indizes pro tag; temperatur, wetter(id), datum mit uhrzeit
+        DateToWeekday dateToWeekday = new DateToWeekday();
+        // 4 indizes pro tag; temperatur, wetter(id), wochentag, datum mit uhrzeit
         List<String> extractedData = new ArrayList<>();
 
         try {
@@ -22,7 +25,10 @@ public class DataExtractor {
 
                 extractedData.add(tempObject.getString("temp"));
                 extractedData.add(idArray.getJSONObject(0).getString("id"));
-                extractedData.add(jsonObject.getString("dt_txt"));
+                String dateTime = jsonObject.getString("dt_txt");
+                extractedData.add(dateToWeekday.getWeekday(dateTime).substring(0, 3));
+                extractedData.add(dateTime);
+
             }
         } catch (JSONException e){
             Log.e("JSONerror", "dataExtractor", e);

@@ -2,20 +2,25 @@ package View;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
+import android.content.pm.PackageManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
 import com.example.weatheria.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class SearchWindow {
+// Erik Witte
+public class SearchWindow extends AppCompatActivity {
     private final LayoutManager layoutManager;
     private final List<View>  viewList;
     private final Context context;
@@ -29,11 +34,18 @@ public class SearchWindow {
     }
 
     public void createSearchWindow(){
+        Button searchBtn = createSearchBtn();
+        Button dbBtn = createDbBtn();
+        Button gpsBtn = createGpsBtn();
+        Button languageBtn = createLanguageBtn();
+
         viewList.add(createSearchField());
-        viewList.add(createSearchBtn());
-        viewList.add(createDbBtn());
-        viewList.add(createGpsBtn());
-        viewList.add(createLanguageBtn());
+        viewList.add(searchBtn);
+        viewList.add(dbBtn);
+        viewList.add(gpsBtn);
+        viewList.add(languageBtn);
+
+        createClickListeners(gpsBtn, searchBtn, languageBtn, dbBtn);
         layoutManager.updateLayout(viewList, -1);
     }
 
@@ -67,11 +79,6 @@ public class SearchWindow {
         params.setMargins(0,0,0,0);
         languageBtn.setLayoutParams(params);
 
-        languageBtn.setOnClickListener(view -> {
-            LocaleHelper localeHelper = new LocaleHelper();
-            localeHelper.setLocale(context);
-            ((Activity) context).recreate();
-        });
         childCount++;
         return languageBtn;
     }
@@ -89,24 +96,6 @@ public class SearchWindow {
         params.setMargins(0,0,0,0);
         searchBtn.setLayoutParams(params);
 
-        searchBtn.setOnClickListener(view -> {
-            EditText edit = (EditText) viewList.get(0);
-            String input = edit.getText().toString();
-            edit.getText().clear();
-
-            TextView noResult = layoutManager.searchInitiated(input, childCount, context);
-            if (noResult == null) {
-                childCount = 0;
-                viewList.clear();
-            }
-            else{
-                List<View> necessaryList = new ArrayList<>();
-                necessaryList.add(noResult);
-                childCount++;
-                layoutManager.updateLayout(necessaryList, -1);
-            }
-        });
-
         childCount++;
         return searchBtn;
     }
@@ -123,12 +112,6 @@ public class SearchWindow {
         params.columnSpec = GridLayout.spec(3, 10, 1f);
         params.setMargins(0,0,0,0);
         dbBtn.setLayoutParams(params);
-
-        dbBtn.setOnClickListener(view -> {
-            layoutManager.updateLayout(chooseFromDb.getDbView(), childCount);
-            viewList.clear();
-            childCount = 0;
-        });
 
         childCount++;
         return dbBtn;
@@ -149,5 +132,44 @@ public class SearchWindow {
 
         childCount++;
         return gpsBtn;
+    }
+
+    private void createClickListeners(Button gps, Button search, Button language, Button db){
+        db.setOnClickListener(v -> {
+            layoutManager.updateLayout(chooseFromDb.getDbView(), childCount);
+            viewList.clear();
+            childCount = 0;
+        });
+
+        search.setOnClickListener(v -> {
+            EditText edit = (EditText) viewList.get(0);
+            String input = edit.getText().toString();
+            edit.getText().clear();
+            TextView noResult = layoutManager.searchInitiated(input, childCount, context);
+
+            if (noResult == null) {
+                childCount = 0;
+                viewList.clear();
+            }
+            else{
+                List<View> necessaryList = new ArrayList<>();
+                necessaryList.add(noResult);
+                childCount++;
+                layoutManager.updateLayout(necessaryList, -1);
+            }
+        });
+
+        language.setOnClickListener(v -> {
+            LocaleManager localeManager = new LocaleManager();
+            localeManager.setLocale(context);
+            ((Activity) context).recreate();
+        });
+
+        gps.setOnClickListener(v -> {
+            int LOCATION_PERMISSION_REQUEST_CODE = 1;
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        });
     }
 }

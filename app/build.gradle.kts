@@ -48,4 +48,6 @@ dependencies {
     implementation("com.google.android.exoplayer:exoplayer-ui:2.19.1")
 
     implementation("com.caverock:androidsvg:1.4")
+
+    implementation("com.google.android.gms:play-services-location:18.0.0")
 }

@@ -5,21 +5,23 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import java.util.Locale;
 
-public class LocaleHelper {
+public class LocaleManager {
 
     public void setLocale(Context context) {
         String language;
-        Locale lo = Locale.getDefault();
-        String l = lo.getLanguage();
-        if (l.equals("de"))
+        Locale locale = Locale.getDefault();
+        // fragt aktuelle locale ab und vergleicht diese mit de
+        if (locale.getLanguage().equals("de"))
             language = "en";
         else
             language = "de";
-        Locale locale = new Locale(language);
+        locale = new Locale(language);
+        // setzt gerade erzeugte locale als system standard
         Locale.setDefault(locale);
         Resources resources = context.getResources();
         Configuration config = resources.getConfiguration();
         config.setLocale(locale);
+        // lädt darstellung neu
         resources.updateConfiguration(config, resources.getDisplayMetrics());
     }
 }

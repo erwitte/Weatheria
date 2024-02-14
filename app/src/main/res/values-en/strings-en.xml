@@ -12,4 +12,5 @@
     <string name="sicherloeschen">really delete</string>
     <string name="sprache">Deutsch</string>
     <string name="keinergebnis">no result</string>
+    <string name="feuchtigkeit">humidity</string>
 </resources>

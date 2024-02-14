@@ -38,9 +38,7 @@ public class LayoutManager{
     }
 
     public void updateLayout(List<View> newViews, int childCount) {
-       Log.i("before", String.valueOf(gridLayout.getChildCount()));
         removeLastChildren(childCount);
-        Log.i("after", String.valueOf(gridLayout.getChildCount()));
         for(View v : newViews)
             this.gridLayout.addView(v);
     }
@@ -73,20 +71,18 @@ public class LayoutManager{
         for (int row = 0; row < 100; row++) {
             for (int col = 0; col < 34; col++) {
                 View view = new View(gridLayout.getContext());
-                // Generate a random color
+                // layout mit durchsichtigen blöcken füllen
                 int color = Color.argb(0, 0,0,0);
                 view.setBackgroundColor(color);
 
-                // Set layout parameters for the view
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                params.width = 0; // Use GridLayout.LayoutParams.MATCH_PARENT if you want fixed sizes instead of weights
-                params.height = 0; // Use GridLayout.LayoutParams.MATCH_PARENT if you want fixed sizes instead of weights
+                params.width = 0;
+                params.height = 0;
                 params.rowSpec = GridLayout.spec(row, 1f);
                 params.columnSpec = GridLayout.spec(col, 1f);
-                params.setMargins(0, 0, 0, 0); // Set margins to create gaps between cells
+                params.setMargins(0, 0, 0, 0);
 
                 view.setLayoutParams(params);
-                 // Add the view to the GridLayout
                 gridLayout.addView(view);
             }
         }

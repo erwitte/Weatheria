@@ -151,9 +151,9 @@ public class Forecast {
         try {
             double kelvin = currentWeather.getJSONObject("main").getDouble("temp");
             if (isFahrenheit == false)
-                locationTemp.setText(Double.toString(kelvinToCelsius(kelvin)) + " °C");
+                locationTemp.setText(kelvinToCelsius(kelvin) + " °C");
             else
-                locationTemp.setText(Double.toString(kelvingToFahrenheit(kelvin)) + " °F");
+                locationTemp.setText(kelvingToFahrenheit(kelvin) + " °F");
         } catch (JSONException e){
             Log.e("JSONError", "fetching temperature", e);
             locationTemp.setText("----");
@@ -182,6 +182,43 @@ public class Forecast {
 
         toReturn.add(weatherIcon);
         childCount++;
+
+        TextView humidityWord = new TextView(context);
+        TextView humidityPercentage= new TextView(context);
+        try {
+            // zeigt zahl der Luftfeuchtigkeit + %
+            String humidityText = currentWeather.getJSONObject("main").getString("humidity") + "%";
+            humidityPercentage.setText(humidityText);
+            GridLayout.LayoutParams paramsHumidityPercentage = new GridLayout.LayoutParams();
+            paramsHumidityPercentage.width = 0;
+            paramsHumidityPercentage.height = 0;
+            paramsHumidityPercentage.rowSpec = GridLayout.spec(8, 4, 1f);
+            paramsHumidityPercentage.columnSpec = GridLayout.spec(22, 4, 1f);
+            paramsHumidityPercentage.setMargins(0,0,0,0);
+
+            humidityPercentage.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            humidityPercentage.setTextColor(Color.BLACK);
+            humidityPercentage.setLayoutParams(paramsHumidityPercentage);
+            toReturn.add(humidityPercentage);
+            childCount++;
+
+            // zeigt wort Feuchtigkeit / humidity
+            humidityWord.setText(context.getString(R.string.feuchtigkeit));
+            GridLayout.LayoutParams paramsHumidityWord = new GridLayout.LayoutParams();
+            paramsHumidityWord.width = 0;
+            paramsHumidityWord.height = 0;
+            paramsHumidityWord.rowSpec = GridLayout.spec(12, 4, 1f);
+            paramsHumidityWord.columnSpec = GridLayout.spec(20, 14, 1f);
+            paramsHumidityWord.setMargins(0,0,0,0);
+
+            humidityWord.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+            humidityWord.setTextColor(Color.BLACK);
+            humidityWord.setLayoutParams(paramsHumidityWord);
+            toReturn.add(humidityWord);
+            childCount++;
+        } catch (JSONException e){
+            Log.e("JSONError", "fetching humidity", e);
+        }
         return toReturn;
     }
 
@@ -293,8 +330,8 @@ public class Forecast {
         forecastData = calculateTemp(forecastData);
 
         // form der recyclerview definieren und füllen
-        int spanCount = 3;
-        int spacing = 20;
+        int spanCount = 4;
+        int spacing = 10;
         dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
         dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
         MyAdapter adapter = new MyAdapter(forecastData);
@@ -325,7 +362,7 @@ public class Forecast {
     }
 
     private List<String> calculateTemp(List<String> rawData){
-        for (int i=0; i< rawData.size(); i = i+3){
+        for (int i=0; i< rawData.size(); i = i+4){
             rawData.set(i, kelvinToCelsius(Double.parseDouble(rawData.get(i))) + " °C");
         }
         return rawData;
