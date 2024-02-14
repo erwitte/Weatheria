@@ -113,4 +113,8 @@ public class LayoutManager{
             gridLayout.removeViewAt(currentChildCount - 1 - lastChild);
         }
     }
+
+    public void removeLast(){
+        gridLayout.removeViewAt(gridLayout.getChildCount() - 1);
+    }
 }

@@ -39,14 +39,15 @@ public class Forecast {
     private JSONArray todaysWeather;
     private JSONArray tomorrowsWeather;
     private JSONArray threeDaysWeather;
+    private boolean isViewed;
     private List<ImageView> svgList; //0=clear; 1=cloudy; 2=drizzle; 3=mist; 4=rain; 5=snow; 6=thunderstorm
 
     public Forecast(Context context, LayoutManager layoutManager, Location location){
         this.context = context;
         this.layoutManager = layoutManager;
         this.weatherFetcher = new WeatherFetcher();
-        DateToWeekday dateToWeekday = new DateToWeekday();
         this.location = location;
+        this.isViewed = false;
 
         this.todaysWeather = weatherFetcher.getTodaysWeather(this.location.getLatitude(), this.location.getLongitude());
         this.tomorrowsWeather = weatherFetcher.getTomorrowsWeather(this.location.getLatitude(), this.location.getLongitude());
@@ -66,7 +67,7 @@ public class Forecast {
         for (View v : createChoiceBtns())
             forecastView.add(v);
 
-        forecastView.add(getDailyForecast());
+        //forecastView.add(getDailyForecast());
         return forecastView;
     }
 
@@ -104,6 +105,10 @@ public class Forecast {
         fahrenheitBtn.setLayoutParams(params);
 
         fahrenheitBtn.setOnClickListener(view -> {
+            if(isViewed) {
+                layoutManager.removeLast();
+                isViewed = false;
+            }
             if (!isFahrenheit) {
                 fahrenheitBtn.setText("Celsius");
                 isFahrenheit = true;
@@ -288,6 +293,13 @@ public class Forecast {
         params.setMargins(0,0,0,0);
         todayBtn.setLayoutParams(params);
         childCount++;
+
+        todayBtn.setOnClickListener(v -> {
+            List<View> toReturn = new ArrayList<>();
+            toReturn.add(getDailyForecast());
+            isViewed = true;
+            layoutManager.updateLayout(toReturn, -1);
+        });
         return todayBtn;
     }
 
@@ -304,6 +316,13 @@ public class Forecast {
         params.setMargins(0,0,0,0);
         tomorrowBtn.setLayoutParams(params);
         childCount++;
+
+        tomorrowBtn.setOnClickListener(v -> {
+            List<View> toReturn = new ArrayList<>();
+            toReturn.add(getTomorrowsForecast());
+            isViewed = true;
+            layoutManager.updateLayout(toReturn, -1);
+        });
         return tomorrowBtn;
     }
 
@@ -324,6 +343,45 @@ public class Forecast {
     }
 
     private View getDailyForecast(){
+        if (isViewed){
+            layoutManager.removeLast();
+        }
+        RecyclerView dailyForecast = new RecyclerView(context);
+        DataExtractor extractor = new DataExtractor();
+        List<String> forecastData = extractor.extractData(weatherFetcher.getTodaysWeather(location.getLatitude(), location.getLongitude()));
+        forecastData = calculateTemp(forecastData);
+
+        // form der recyclerview definieren und füllen
+        int spanCount = 4;
+        int spacing = 10;
+        dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
+        dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
+        MyAdapter adapter = new MyAdapter(forecastData);
+        dailyForecast.setAdapter(adapter);
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = GridLayout.LayoutParams.MATCH_PARENT;
+        params.height = GridLayout.LayoutParams.MATCH_PARENT;
+        params.setMargins(0,0,0,0);
+
+        dailyForecast.setLayoutParams(params);
+
+        GridLayout grid = new GridLayout(context);
+        GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
+        gridParams.rowSpec = GridLayout.spec(28, 60, 1f);
+        gridParams.columnSpec = GridLayout.spec(0, 34);
+        gridParams.setMargins(0,0,0,0);
+        grid.setLayoutParams(gridParams);
+        grid.addView(dailyForecast);
+
+        childCount++;
+        return grid;
+    }
+
+    private View getTomorrowsForecast(){
+        if (isViewed){
+            layoutManager.removeLast();
+        }
         RecyclerView dailyForecast = new RecyclerView(context);
         DataExtractor extractor = new DataExtractor();
         List<String> forecastData = extractor.extractData(weatherFetcher.getTomorrowsWeather(location.getLatitude(), location.getLongitude()));
@@ -341,30 +399,31 @@ public class Forecast {
         params.width = GridLayout.LayoutParams.MATCH_PARENT;
         params.height = GridLayout.LayoutParams.MATCH_PARENT;
         params.setMargins(0,0,0,0);
-        // ohne weight bei rowSpec wird der obere teil gequetsch, weight bei columnSpec zerschiesst ui
-        //params.rowSpec = GridLayout.spec(40,50, 1f);
-        //params.columnSpec = GridLayout.spec(0, 34);
-
         dailyForecast.setLayoutParams(params);
 
-        GridLayout a = new GridLayout(context);
-        GridLayout.LayoutParams v = new GridLayout.LayoutParams();
-        //v.width = 0;
-        //v.height = 0;
-        v.rowSpec = GridLayout.spec(28, 60, 1f);
-        v.columnSpec = GridLayout.spec(0, 34);
-        v.setMargins(0,0,0,0);
-        a.setLayoutParams(v);
-        a.addView(dailyForecast);
+        GridLayout grid = new GridLayout(context);
+        GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
+        gridParams.rowSpec = GridLayout.spec(28, 60, 1f);
+        gridParams.columnSpec = GridLayout.spec(0, 34);
+        gridParams.setMargins(0,0,0,0);
+        grid.setLayoutParams(gridParams);
+        grid.addView(dailyForecast);
 
         childCount++;
-        return a;
+        return grid;
     }
 
-    private List<String> calculateTemp(List<String> rawData){
-        for (int i=0; i< rawData.size(); i = i+4){
-            rawData.set(i, kelvinToCelsius(Double.parseDouble(rawData.get(i))) + " °C");
+    private List<String> calculateTemp(List<String> temps){
+        if (!isFahrenheit) {
+            for (int i = 0; i < temps.size(); i = i + 4) {
+                temps.set(i, kelvinToCelsius(Double.parseDouble(temps.get(i))) + " °C");
+            }
+            return temps;
+        } else {
+            for (int i = 0; i < temps.size(); i = i + 4) {
+                temps.set(i, kelvingToFahrenheit(Double.parseDouble(temps.get(i))) + " °F");
+            }
+            return temps;
         }
-        return rawData;
     }
 }
