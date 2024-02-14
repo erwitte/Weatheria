@@ -10,4 +10,5 @@
     <string name="loeschen">hold to delete</string>
     <string name="nurloeschen">delete</string>
     <string name="sicherloeschen">really delete</string>
+    <string name="sprache">Deutsch</string>
 </resources>

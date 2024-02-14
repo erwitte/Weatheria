@@ -10,4 +10,5 @@
     <string name="loeschen">Gedrückt halten zum löschen</string>
     <string name="nurloeschen">löschen</string>
     <string name="sicherloeschen">sicher löschen</string>
+    <string name="sprache">English</string>
 </resources>

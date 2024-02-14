@@ -1,5 +1,6 @@
 package View;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -31,6 +32,7 @@ public class SearchWindow {
         viewList.add(createSearchBtn());
         viewList.add(createDbBtn());
         viewList.add(createGpsBtn());
+        viewList.add(createLanguageBtn());
         layoutManager.updateLayout(viewList, -1);
     }
 
@@ -49,6 +51,28 @@ public class SearchWindow {
 
         childCount++;
         return searchField;
+    }
+
+    private Button createLanguageBtn(){
+        Button languageBtn = new Button(context);
+        languageBtn.setText(context.getString(R.string.sprache));
+        languageBtn.setBackgroundResource(R.drawable.roundec_corners);
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = 0;
+        params.height = 0;
+        params.rowSpec = GridLayout.spec(0, 7, 1f);
+        params.columnSpec = GridLayout.spec(0, 11, 1f);
+        params.setMargins(0,0,0,0);
+        languageBtn.setLayoutParams(params);
+
+        languageBtn.setOnClickListener(view -> {
+            LocaleHelper localeHelper = new LocaleHelper();
+            localeHelper.setLocale(context);
+            ((Activity) context).recreate();
+        });
+        childCount++;
+        return languageBtn;
     }
 
     private Button createSearchBtn(){
