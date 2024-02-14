@@ -2,7 +2,6 @@ package View;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,12 +14,12 @@ import java.util.List;
 
 
 public class SearchWindow {
-    private LayoutManager layoutManager;
+    private final LayoutManager layoutManager;
     //opacity of .8
-    private String hexColor = "#99FFFFFF";
-    private List<View>  viewList;
-    private Context context;
-    private ChooseFromDb chooseFromDb;
+    final String hexColor = "#99FFFFFF";
+    private final List<View>  viewList;
+    private final Context context;
+    private final ChooseFromDb chooseFromDb;
     private int childCount = 0;
     public SearchWindow(LayoutManager layoutManager, Context context){
         this.layoutManager = layoutManager;

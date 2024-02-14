@@ -1,9 +1,7 @@
 package View;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,8 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.weatheria.R;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +21,9 @@ import Controller.LocationHandler;
 
 public class ChooseFromDb {
 
-    private LayoutManager layoutManager;
-    private Context context;
-    private LocationHandler locationHandler;
+    private final LayoutManager layoutManager;
+    private final Context context;
+    private final LocationHandler locationHandler;
     private int childCount = 0;
 
     public ChooseFromDb(LayoutManager layoutManager, Context context){
@@ -39,9 +35,9 @@ public class ChooseFromDb {
     public List<View> getDbView(){
         List<View> dbViewList = new ArrayList<>();
         dbViewList.add(createText());
-        dbViewList.add(createTable());
         dbViewList.add(createBackBtn());
         dbViewList.add(createInfoText());
+        dbViewList.add(createTable());
         return dbViewList;
     }
 
@@ -96,7 +92,7 @@ public class ChooseFromDb {
         params.setMargins(0,0,0,0);
         backBtn.setLayoutParams(params);
 
-        backBtn.setOnClickListener(view -> {
+        backBtn.setOnClickListener(v -> {
             layoutManager.goBack(childCount);
         });
         childCount++;
@@ -130,12 +126,11 @@ public class ChooseFromDb {
         table.setOnItemLongClickListener((parent, view, position, id) -> {
             new AlertDialog.Builder(context)
                     .setTitle(context.getString(R.string.nurloeschen))
-                    .setMessage(locationHandler.getDbEntries().get(position) + " " + context.getString(R.string.sicherloeschen))
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            locationHandler.deleteDbEntry(locationHandler.getDbEntries().get(position));
-                        }
-                    })
+                    .setMessage(locationHandler.getDbEntries().get(position) + " "
+                            + context.getString(R.string.sicherloeschen))
+
+                    .setPositiveButton(android.R.string.yes, (dialog, which) ->
+                            locationHandler.deleteDbEntry(locationHandler.getDbEntries().get(position)))
                     .setNegativeButton(android.R.string.no, null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();

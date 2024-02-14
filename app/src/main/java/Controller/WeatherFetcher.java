@@ -98,7 +98,7 @@ public class WeatherFetcher {
 
         try{
             int upToDateInt = parseDateToInt(formattedDate);
-            // erhöht performance
+
             int completeWeatherArrayLength = completeWeatherArray.length();
             for (int forecastSlot=0; forecastSlot < completeWeatherArrayLength; forecastSlot++) {
                 JSONObject jsonObject = completeWeatherArray.getJSONObject(forecastSlot);

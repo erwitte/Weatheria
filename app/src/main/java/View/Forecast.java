@@ -25,16 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Controller.DateToWeekday;
-import Controller.LocationHandler;
 import Model.Location;
 import Controller.WeatherFetcher;
 
 public class Forecast {
 
-    private WeatherFetcher weatherFetcher;
-    private DateToWeekday dateToWeekday;
-    private Location location;
-    private LocationHandler locationHandler;
+    private final WeatherFetcher weatherFetcher;
+    private final Location location;
     private Context context;
     private LayoutManager layoutManager;
     private int childCount = 0;
@@ -48,8 +45,7 @@ public class Forecast {
         this.context = context;
         this.layoutManager = layoutManager;
         this.weatherFetcher = new WeatherFetcher();
-        this.dateToWeekday = new DateToWeekday();
-        this.locationHandler = new LocationHandler(context);
+        DateToWeekday dateToWeekday = new DateToWeekday();
         this.location = location;
 
         this.todaysWeather = weatherFetcher.getTodaysWeather(this.location.getLatitude(), this.location.getLongitude());
@@ -288,31 +284,42 @@ public class Forecast {
     private View getDailyForecast(){
         RecyclerView dailyForecast = new RecyclerView(context);
         DataExtractor extractor = new DataExtractor();
-        List<String> forecastData = extractor.extractData(weatherFetcher.getTodaysWeather(location.getLatitude(), location.getLongitude()));
-        forecastData = calculateTempForecast(forecastData);
+        List<String> forecastData = extractor.extractData(weatherFetcher.getTomorrowsWeather(location.getLatitude(), location.getLongitude()));
+        forecastData = calculateTemp(forecastData);
 
         // form der recyclerview definieren und füllen
         int spanCount = 3;
-        int spacing = 50;
+        int spacing = 20;
         dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
         dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
         MyAdapter adapter = new MyAdapter(forecastData);
         dailyForecast.setAdapter(adapter);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = GridLayout.LayoutParams.WRAP_CONTENT;
-        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-
+        params.width = GridLayout.LayoutParams.MATCH_PARENT;
+        params.height = GridLayout.LayoutParams.MATCH_PARENT;
+        params.setMargins(0,0,0,0);
         // ohne weight bei rowSpec wird der obere teil gequetsch, weight bei columnSpec zerschiesst ui
-        params.rowSpec = GridLayout.spec(40, 30, 1f);
-        params.columnSpec = GridLayout.spec(0, 34);
+        //params.rowSpec = GridLayout.spec(40,50, 1f);
+        //params.columnSpec = GridLayout.spec(0, 34);
 
         dailyForecast.setLayoutParams(params);
+
+        GridLayout a = new GridLayout(context);
+        GridLayout.LayoutParams v = new GridLayout.LayoutParams();
+        //v.width = 0;
+        //v.height = 0;
+        v.rowSpec = GridLayout.spec(28, 60, 1f);
+        v.columnSpec = GridLayout.spec(0, 34);
+        v.setMargins(0,0,0,0);
+        a.setLayoutParams(v);
+        a.addView(dailyForecast);
+
         childCount++;
-        return dailyForecast;
+        return a;
     }
 
-    private List<String> calculateTempForecast(List<String> rawData){
+    private List<String> calculateTemp(List<String> rawData){
         for (int i=0; i< rawData.size(); i = i+3){
             rawData.set(i, kelvinToCelsius(Double.parseDouble(rawData.get(i))) + " °C");
         }

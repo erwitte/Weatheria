@@ -2,7 +2,6 @@ package View;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -11,17 +10,19 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.view.View;
 
+import com.example.weatheria.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import Model.Location;
 
 public class ChooseFromMultiple {
-    private List<Location> locationList;
-    private LayoutManager layoutManager;
-    private Context context;
-    private String[] arrayExactNames;
-    private int countLocations;
+    private final List<Location> locationList;
+    private final LayoutManager layoutManager;
+    private final Context context;
+    private final String[] arrayExactNames;
+    private final int countLocations;
     private int childCount = 0;
 
     public ChooseFromMultiple(List<Location> locationList, LayoutManager layoutManager, Context context){
@@ -34,7 +35,7 @@ public class ChooseFromMultiple {
 
     public List<View> createChooseLoc(){
         List<View> newViews = new ArrayList<>();
-        newViews.add(createText());;
+        newViews.add(createText());
         newViews.add(createTable());
         newViews.add(createBackBtn());
         return newViews;
@@ -70,7 +71,7 @@ public class ChooseFromMultiple {
 
     private TextView createText(){
         TextView text = new TextView(context);
-        text.setText("Bitte auswählen");
+        text.setText(context.getString(R.string.auswahl));
         // sp skaliert mit bildschirmgröße
         text.setTextSize(TypedValue.COMPLEX_UNIT_SP, 30);
         text.setTextColor(Color.BLACK);
@@ -89,7 +90,7 @@ public class ChooseFromMultiple {
 
     private Button createBackBtn(){
         Button backBtn = new Button(context);
-        backBtn.setText("zurück");
+        backBtn.setText(context.getString(R.string.zurueck));
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -99,7 +100,7 @@ public class ChooseFromMultiple {
         params.setMargins(0,0,0,0);
         backBtn.setLayoutParams(params);
 
-        backBtn.setOnClickListener(view -> {
+        backBtn.setOnClickListener(v -> {
             layoutManager.goBack(childCount);
         });
         childCount++;

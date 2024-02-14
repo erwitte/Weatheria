@@ -33,7 +33,9 @@ public class LayoutManager{
     }
 
     public void updateLayout(List<View> newViews, int childCount) {
+       Log.i("before", String.valueOf(gridLayout.getChildCount()));
         removeLastChildren(childCount);
+        Log.i("after", String.valueOf(gridLayout.getChildCount()));
         for(View v : newViews)
             this.gridLayout.addView(v);
     }
