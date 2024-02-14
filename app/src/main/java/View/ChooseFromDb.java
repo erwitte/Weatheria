@@ -83,6 +83,7 @@ public class ChooseFromDb {
     private Button createBackBtn(){
         Button backBtn = new Button(context);
         backBtn.setText(context.getString(R.string.zurueck));
+        backBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;

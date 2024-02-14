@@ -15,8 +15,6 @@ import java.util.List;
 
 public class SearchWindow {
     private final LayoutManager layoutManager;
-    //opacity of .8
-    final String hexColor = "#99FFFFFF";
     private final List<View>  viewList;
     private final Context context;
     private final ChooseFromDb chooseFromDb;
@@ -38,7 +36,7 @@ public class SearchWindow {
 
     private EditText createSearchField(){
         EditText searchField = new EditText(context);
-        searchField.setBackgroundColor(Color.parseColor(hexColor));
+        searchField.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams paramsEditText = new GridLayout.LayoutParams();
         paramsEditText.width = 0;
@@ -56,6 +54,7 @@ public class SearchWindow {
     private Button createSearchBtn(){
         Button searchBtn = new Button(context);
         searchBtn.setText(context.getString(R.string.suchen));
+        searchBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -81,6 +80,7 @@ public class SearchWindow {
     private Button createDbBtn(){
         Button dbBtn = new Button(context);
         dbBtn.setText(context.getString(R.string.datenbank));
+        dbBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -103,6 +103,7 @@ public class SearchWindow {
     private Button createGpsBtn(){
         Button gpsBtn = new Button(context);
         gpsBtn.setText("GPS");
+        gpsBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;

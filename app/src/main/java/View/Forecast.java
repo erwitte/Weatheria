@@ -73,6 +73,7 @@ public class Forecast {
     private Button createBackBtn(){
         Button backBtn = new Button(context);
         backBtn.setText(context.getString(R.string.zurueck));
+        backBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -92,6 +93,7 @@ public class Forecast {
     private Button createFahrenheitBtn(){
         Button fahrenheitBtn = new Button(context);
         fahrenheitBtn.setText("Fahrenheit");
+        fahrenheitBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -239,6 +241,7 @@ public class Forecast {
     private Button createTodayBtn(){
         Button todayBtn = new Button(context);
         todayBtn.setText(context.getString(R.string.heute));
+        todayBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -254,6 +257,7 @@ public class Forecast {
     private Button createTomorrowBtn(){
         Button tomorrowBtn = new Button(context);
         tomorrowBtn.setText(context.getString(R.string.morgen));
+        tomorrowBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
@@ -269,6 +273,7 @@ public class Forecast {
     private Button create3DaysBtn(){
         Button threeDaysBtn = new Button(context);
         threeDaysBtn.setText(context.getString(R.string.dreitage));
+        threeDaysBtn.setBackgroundResource(R.drawable.roundec_corners);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = 0;
