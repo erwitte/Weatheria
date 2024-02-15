@@ -2,9 +2,11 @@ package View;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.PictureDrawable;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -42,7 +44,7 @@ public class Forecast {
     private JSONArray threeDaysWeather;
     private boolean isViewed;
     private FileWriterReader fileWriterReader;
-    private List<ImageView> svgList; //0=clear; 1=cloudy; 2=drizzle; 3=mist; 4=rain; 5=snow; 6=thunderstorm
+    private int forecastViewCounter;
 
     public Forecast(Context context, LayoutManager layoutManager, Location location){
         this.context = context;
@@ -51,14 +53,13 @@ public class Forecast {
         this.weatherFetcher = new WeatherFetcher(context, fileWriterReader);
         this.location = location;
         this.isViewed = false;
+        forecastViewCounter = 0;
 
         fileWriterReader.setExactName(location.getExactName());
 
         this.todaysWeather = weatherFetcher.getTodaysWeather(this.location.getLatitude(), this.location.getLongitude());
         this.tomorrowsWeather = weatherFetcher.getTomorrowsWeather(this.location.getLatitude(), this.location.getLongitude());
         this.threeDaysWeather = weatherFetcher.getThreeDaysWeather(this.location.getLatitude(), this.location.getLongitude());
-
-        svgList = loadSvg();
     }
 
     public List<View> getForecastView(){
@@ -111,7 +112,8 @@ public class Forecast {
 
         fahrenheitBtn.setOnClickListener(view -> {
             if(isViewed) {
-                layoutManager.removeLast();
+                layoutManager.removeLastChildren(forecastViewCounter);
+                forecastViewCounter = 0;
                 isViewed = false;
             }
             if (!isFahrenheit) {
@@ -181,7 +183,7 @@ public class Forecast {
         toReturn.add(locationTemp);
 
         // passendes icon zum wetter am ort
-        ImageView weatherIcon = chooseIcon(currentWeather);
+        ImageView weatherIcon = extractId(currentWeather);
         GridLayout.LayoutParams paramsIcon = new GridLayout.LayoutParams();
         paramsIcon.width = 150;
         paramsIcon.height = 150;
@@ -232,49 +234,49 @@ public class Forecast {
         return toReturn;
     }
 
-    private List<ImageView> loadSvg(){
-        List<ImageView> svgList = new ArrayList<>();
-
-        // grafiken als int laden
-        int[] svgRessources = new int[]{R.raw.clearsvg, R.raw.cloudysvg,
-                R.raw.drizzlesvg, R.raw.mistsvg, R.raw.rainsvg, R.raw.snowsvg, R.raw.thunderstormsvg};
-        for (int ressource : svgRessources){
-            try{
-                // int Grafiken zu Grafiken machen
-                SVG svg = SVG.getFromResource(context, ressource);
-                ImageView svgView = new ImageView(context);
-                svgView.setImageDrawable(new PictureDrawable(svg.renderToPicture()));
-                svgList.add(svgView);
-            } catch (Exception e){
-                Log.e("SVGError", String.valueOf(ressource), e);
-            }
-        }
-        return svgList;
-    }
-
-    private ImageView chooseIcon(JSONObject currentWeather){
+    private ImageView extractId(JSONObject currentWeather){
         try{
             JSONArray weatherArray = currentWeather.getJSONArray("weather");
             JSONObject currentWeatherObject = weatherArray.getJSONObject(0);
             int id = currentWeatherObject.getInt("id");
-            if (id > 199 && id < 300){
-                return svgList.get(6);
-            } else if (id > 299 && id < 400)
-                return svgList.get(2);
-            else if (id > 499 && id < 600)
-                return svgList.get(4);
-            else if (id > 599 && id < 700)
-                return svgList.get(5);
-            else if (id > 699 && id < 800)
-                return svgList.get(3);
-            else if (id == 800)
-                return svgList.get(0);
-            else if (id > 800 && id < 900)
-                return svgList.get(1);
+            return chooseIcon(id);
         } catch(JSONException e){
             Log.e("JSONError", "forecast.chooseIcon", e);
         }
         return null;
+    }
+
+    private ImageView chooseIcon(int id){
+        ImageView icon = new ImageView(context);
+        int resource = 0;
+        if (id > 199 && id < 300){
+            resource = R.raw.thunderstormsvg;
+        } else if (id > 299 && id < 400) {
+            resource = R.raw.drizzlesvg;
+        } else if (id > 499 && id < 600) {
+            resource = R.raw.rainsvg;
+        } else if (id > 599 && id < 700) {
+            resource = R.raw.snowsvg;
+        } else if (id > 699 && id < 800) {
+            resource = R.raw.mistsvg;
+        } else if (id == 800) {
+            resource = R.raw.clearsvg;
+        } else if (id > 800 && id < 900) {
+            resource = R.raw.cloudysvg;
+        }
+
+        icon.setImageDrawable(convertSvgToDrawable(resource));
+        return icon;
+    }
+
+    private Drawable convertSvgToDrawable(int svgResource) {
+        try {
+            SVG svg = SVG.getFromResource(context, svgResource);
+            return new PictureDrawable(svg.renderToPicture());
+        } catch (Exception e) {
+            Log.e("SVGError", "Loading SVG resource failed.", e);
+            return null;
+        }
     }
 
     private List<Button> createChoiceBtns(){
@@ -300,10 +302,11 @@ public class Forecast {
         childCount++;
 
         todayBtn.setOnClickListener(v -> {
-            List<View> toReturn = new ArrayList<>();
-            toReturn.add(getDailyForecast());
+            if (isViewed)
+                layoutManager.removeLastChildren(forecastViewCounter);
+            forecastViewCounter = 0;
+            layoutManager.updateLayout(getDailyForecast(), -1);
             isViewed = true;
-            layoutManager.updateLayout(toReturn, -1);
         });
         return todayBtn;
     }
@@ -323,10 +326,11 @@ public class Forecast {
         childCount++;
 
         tomorrowBtn.setOnClickListener(v -> {
-            List<View> toReturn = new ArrayList<>();
-            toReturn.add(getTomorrowsForecast());
+            if (isViewed)
+                layoutManager.removeLastChildren(forecastViewCounter);
+            forecastViewCounter = 0;
+            layoutManager.updateLayout(getTomorrowsForecast(), -1);
             isViewed = true;
-            layoutManager.updateLayout(toReturn, -1);
         });
         return tomorrowBtn;
     }
@@ -347,75 +351,20 @@ public class Forecast {
         return threeDaysBtn;
     }
 
-    private View getDailyForecast(){
-        if (isViewed){
-            layoutManager.removeLast();
-        }
-        RecyclerView dailyForecast = new RecyclerView(context);
+    private List<View> getDailyForecast(){
         DataExtractor extractor = new DataExtractor();
         List<String> forecastData = extractor.extractData(weatherFetcher.getTodaysWeather(location.getLatitude(), location.getLongitude()));
         forecastData = calculateTemp(forecastData);
 
-        // form der recyclerview definieren und füllen
-        int spanCount = 4;
-        int spacing = 10;
-        dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
-        dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
-        MyAdapter adapter = new MyAdapter(forecastData);
-        dailyForecast.setAdapter(adapter);
-
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = GridLayout.LayoutParams.MATCH_PARENT;
-        params.height = GridLayout.LayoutParams.MATCH_PARENT;
-        params.setMargins(0,0,0,0);
-
-        dailyForecast.setLayoutParams(params);
-
-        GridLayout grid = new GridLayout(context);
-        GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
-        gridParams.rowSpec = GridLayout.spec(28, 60, 1f);
-        gridParams.columnSpec = GridLayout.spec(0, 34);
-        gridParams.setMargins(0,0,0,0);
-        grid.setLayoutParams(gridParams);
-        grid.addView(dailyForecast);
-
-        childCount++;
-        return grid;
+        return createForecast(forecastData);
     }
 
-    private View getTomorrowsForecast(){
-        if (isViewed){
-            layoutManager.removeLast();
-        }
-        RecyclerView dailyForecast = new RecyclerView(context);
+    private List<View> getTomorrowsForecast(){
         DataExtractor extractor = new DataExtractor();
         List<String> forecastData = extractor.extractData(weatherFetcher.getTomorrowsWeather(location.getLatitude(), location.getLongitude()));
         forecastData = calculateTemp(forecastData);
 
-        // form der recyclerview definieren und füllen
-        int spanCount = 4;
-        int spacing = 10;
-        dailyForecast.setLayoutManager(new GridLayoutManager(context, spanCount));
-        dailyForecast.addItemDecoration(new GridSpacingItemDecoration(context, spanCount, spacing, true));
-        MyAdapter adapter = new MyAdapter(forecastData);
-        dailyForecast.setAdapter(adapter);
-
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = GridLayout.LayoutParams.MATCH_PARENT;
-        params.height = GridLayout.LayoutParams.MATCH_PARENT;
-        params.setMargins(0,0,0,0);
-        dailyForecast.setLayoutParams(params);
-
-        GridLayout grid = new GridLayout(context);
-        GridLayout.LayoutParams gridParams = new GridLayout.LayoutParams();
-        gridParams.rowSpec = GridLayout.spec(28, 60, 1f);
-        gridParams.columnSpec = GridLayout.spec(0, 34);
-        gridParams.setMargins(0,0,0,0);
-        grid.setLayoutParams(gridParams);
-        grid.addView(dailyForecast);
-
-        childCount++;
-        return grid;
+        return createForecast(forecastData);
     }
 
     private List<String> calculateTemp(List<String> temps){
@@ -430,5 +379,82 @@ public class Forecast {
             }
             return temps;
         }
+    }
+
+    private List<View> createForecast(List<String> input){
+        List<View> createdViews = new ArrayList<>();
+        int index = 0;
+        int row = 27;
+        int column = 1;
+
+        while (index < input.size()){
+            TextView text1 = new TextView(context);
+            text1.setText(input.get(index));
+            index++;
+            forecastViewCounter++;
+
+            GridLayout.LayoutParams paramsText1 = new GridLayout.LayoutParams();
+            paramsText1.width = 0;
+            paramsText1.height = 0;
+            paramsText1.rowSpec = GridLayout.spec(row, 7, 1f);
+            paramsText1.columnSpec = GridLayout.spec(column, 8, 1f);
+            paramsText1.setMargins(0,0,0,0);
+            text1.setLayoutParams(paramsText1);
+            childCount++;
+            createdViews.add(text1);
+            column = column + 8;
+
+            ImageView icon = chooseIcon(Integer.parseInt(input.get(index)));
+            index++;
+            forecastViewCounter++;
+
+            GridLayout.LayoutParams image = new GridLayout.LayoutParams();
+            image.width = 0;
+            image.height = 0;
+            image.rowSpec = GridLayout.spec(row, 7, 1f);
+            image.columnSpec = GridLayout.spec(column, 8, 1f);
+            image.setMargins(0,0,0,0);
+            icon.setLayoutParams(image);
+            childCount++;
+            createdViews.add(icon);
+            column = column + 8;
+
+            TextView text2 = new TextView(context);
+            text2.setText(input.get(index));
+            index++;
+            forecastViewCounter++;
+
+            GridLayout.LayoutParams paramsText2 = new GridLayout.LayoutParams();
+            paramsText2.width = 0;
+            paramsText2.height = 0;
+            paramsText2.rowSpec = GridLayout.spec(row, 7, 1f);
+            paramsText2.columnSpec = GridLayout.spec(column, 8, 1f);
+            paramsText2.setMargins(0,0,0,0);
+            text2.setLayoutParams(paramsText2);
+            childCount++;
+            createdViews.add(text2);
+
+            column = column + 8;
+
+            TextView text3 = new TextView(context);
+            text3.setText(input.get(index));
+            index++;
+            forecastViewCounter++;
+
+            GridLayout.LayoutParams paramsText3 = new GridLayout.LayoutParams();
+            paramsText3.width = 0;
+            paramsText3.height = 0;
+            paramsText3.rowSpec = GridLayout.spec(row, 7, 1f);
+            paramsText3.columnSpec = GridLayout.spec(column, 8, 1f);
+            paramsText3.setMargins(0,0,0,0);
+            text3.setLayoutParams(paramsText3);
+            childCount++;
+            createdViews.add(text3);
+
+            column = 1;
+            row = row + 8;
+        }
+
+        return createdViews;
     }
 }

@@ -121,7 +121,7 @@ public class LayoutManager{
         updateLayout(forecast.getForecastView(), childCount);
     }
 
-    private void removeLastChildren(int toRemove){
+    public void removeLastChildren(int toRemove){
         // getChildCount ändert sich wenn views entfernt werden
         int currentChildCount = gridLayout.getChildCount();
         for (int lastChild=0; lastChild<toRemove; lastChild++){
