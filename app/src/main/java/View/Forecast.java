@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Controller.DateToWeekday;
+import Controller.FileWriterReader;
 import Model.Location;
 import Controller.WeatherFetcher;
 
@@ -40,14 +41,18 @@ public class Forecast {
     private JSONArray tomorrowsWeather;
     private JSONArray threeDaysWeather;
     private boolean isViewed;
+    private FileWriterReader fileWriterReader;
     private List<ImageView> svgList; //0=clear; 1=cloudy; 2=drizzle; 3=mist; 4=rain; 5=snow; 6=thunderstorm
 
     public Forecast(Context context, LayoutManager layoutManager, Location location){
         this.context = context;
         this.layoutManager = layoutManager;
-        this.weatherFetcher = new WeatherFetcher(context);
+        this.fileWriterReader = new FileWriterReader(context);
+        this.weatherFetcher = new WeatherFetcher(context, fileWriterReader);
         this.location = location;
         this.isViewed = false;
+
+        fileWriterReader.setExactName(location.getExactName());
 
         this.todaysWeather = weatherFetcher.getTodaysWeather(this.location.getLatitude(), this.location.getLongitude());
         this.tomorrowsWeather = weatherFetcher.getTomorrowsWeather(this.location.getLatitude(), this.location.getLongitude());

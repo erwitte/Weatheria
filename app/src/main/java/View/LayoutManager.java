@@ -10,8 +10,11 @@ import android.widget.TextView;
 
 import com.example.weatheria.R;
 
+import java.io.File;
 import java.util.List;
 
+import Controller.FileWriterReader;
+import Controller.InternetChecker;
 import Controller.LocationHandler;
 import Model.Location;
 
@@ -20,16 +23,29 @@ public class LayoutManager{
     final private LocationHandler locationHandler;
     private List<Location> matchingLocations;
     final private SearchWindow searchWindow;
+    private final InternetChecker internetChecker;
 
     public LayoutManager(GridLayout gridLayout){
         this.gridLayout = gridLayout;
         this.searchWindow = new SearchWindow(this, gridLayout.getContext());
         this.locationHandler = new LocationHandler(gridLayout.getContext());
+        this.internetChecker = new InternetChecker(gridLayout.getContext());
     }
 
     public void initialStart(){
+        File lastSearch = new File(gridLayout.getContext().getFilesDir(), "weatherData.txt");
         initialFillLayout();
-        this.searchWindow.createSearchWindow();
+        if (lastSearch.exists()){
+            FileWriterReader fileWriterReader = new FileWriterReader(gridLayout.getContext());
+            Location lastLocation = locationHandler.getEntry(fileWriterReader.readExactName());
+            Forecast forecast = new Forecast(gridLayout.getContext(), this, lastLocation);
+            updateLayout(forecast.getForecastView(), -1);
+        } else {
+
+            this.searchWindow.createSearchWindow();
+        }
+        //initialFillLayout();
+        //this.searchWindow.createSearchWindow();
     }
 
     public void goBack(int childCount){

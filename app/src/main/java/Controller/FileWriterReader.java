@@ -14,6 +14,7 @@ public class FileWriterReader {
     private String currentWeather;
     private final Context context;
     private String fiveDaysForecast;
+    private String exactName;
 
     public FileWriterReader(Context context){
         this.context = context;
@@ -21,13 +22,22 @@ public class FileWriterReader {
 
     public void setCurrentWeather(String currentWeather){
         this.currentWeather = currentWeather;
-        if (currentWeather != null && fiveDaysForecast != null)
+        if (currentWeather != null && fiveDaysForecast != null
+                && exactName != null)
             writeToFile();
     }
 
     public void setFiveDaysForecast(String fiveDaysForecast) {
         this.fiveDaysForecast = fiveDaysForecast;
-        if (currentWeather != null && fiveDaysForecast != null)
+        if (currentWeather != null && fiveDaysForecast != null
+                && exactName != null)
+            writeToFile();
+    }
+
+    public void setExactName(String exactName){
+        this.exactName = exactName;
+        if (currentWeather != null && fiveDaysForecast != null
+                && exactName != null)
             writeToFile();
     }
 
@@ -37,6 +47,7 @@ public class FileWriterReader {
             OutputStreamWriter writer = new OutputStreamWriter(fos);
             writer.write(this.currentWeather + "\n");
             writer.write(this.fiveDaysForecast + "\n");
+            writer.write(this.exactName + "\n");
             writer.close();
         } catch (IOException e){
             Log.e("IOException", "FileWriter", e);
@@ -69,5 +80,9 @@ public class FileWriterReader {
 
     public String readFiveDaysForecast(){
         return readLineAt(2);
+    }
+
+    public String readExactName(){
+        return readLineAt(3);
     }
 }

@@ -19,24 +19,35 @@ import java.util.concurrent.CountDownLatch;
 public class WeatherFetcher {
     private final FileWriterReader fileWriterReader;
     private final String apiKey;
+    private final InternetChecker internetChecker;
 
-    public WeatherFetcher(Context context){
+    public WeatherFetcher(Context context, FileWriterReader fileWriterReader){
         this.apiKey = "&appid=809847a25e5f68fa0bc19f41354fb5b7";
-        this.fileWriterReader = new FileWriterReader(context);
+        this.fileWriterReader = fileWriterReader;
+        this.internetChecker = new InternetChecker(context);
     }
 
     // stellt nicht das aktuelle datum
     public JSONObject getCurrentWeather(double latitude, double longitude){
-        String queryUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude
-                + "&lon=" + longitude + apiKey;
-        String apiResponse = getApiData(queryUrl);
-        if (apiResponse != null){
-            try{
-                JSONObject currenWeather = new JSONObject(apiResponse);
-                fileWriterReader.setCurrentWeather(currenWeather.toString());
-                return currenWeather;
+        if(internetChecker.hasInternet()) {
+            String queryUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude
+                    + "&lon=" + longitude + apiKey;
+            String apiResponse = getApiData(queryUrl);
+            if (apiResponse != null) {
+                try {
+                    JSONObject currenWeather = new JSONObject(apiResponse);
+                    fileWriterReader.setCurrentWeather(currenWeather.toString());
+                    return currenWeather;
+                } catch (JSONException e) {
+                    Log.e("JSONError", "weatherFetcher, getCurrent", e);
+                }
+            }
+
+        } else {
+            try {
+                return new JSONObject(fileWriterReader.readCurrentWeather());
             } catch (JSONException e){
-                Log.e("JSONError", "weatherFetcher, getCurrent", e);
+                Log.e("JSONError", "retrieving current weather", e);
             }
         }
         return null;
@@ -44,18 +55,27 @@ public class WeatherFetcher {
 
     // return 5 days forecast split into 3h parts
     private JSONArray get5DaysJson(double latitude, double longitude){
-        String queryUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon="
-                + longitude + apiKey;
-        String apiResponse = getApiData(queryUrl);
-        if (apiResponse != null) {
-            try {
-                //API antwort zu JSON
-                JSONObject completeJson = new JSONObject(apiResponse);
-                JSONArray fiveDaysJson = completeJson.getJSONArray("list");
-                fileWriterReader.setFiveDaysForecast(fiveDaysJson.toString());
-                return fiveDaysJson;
-            } catch (JSONException e) {
-                Log.e("JSONError", "weatherFetcher, get5Days", e);
+        if (internetChecker.hasInternet()) {
+            String queryUrl = "https://api.openweathermap.org/data/2.5/forecast?lat=" + latitude + "&lon="
+                    + longitude + apiKey;
+            String apiResponse = getApiData(queryUrl);
+            if (apiResponse != null) {
+                try {
+                    //API antwort zu JSON
+                    JSONObject completeJson = new JSONObject(apiResponse);
+                    JSONArray fiveDaysJson = completeJson.getJSONArray("list");
+                    fileWriterReader.setFiveDaysForecast(fiveDaysJson.toString());
+                    return fiveDaysJson;
+                } catch (JSONException e) {
+                    Log.e("JSONError", "weatherFetcher, get5Days", e);
+                }
+            }
+
+        } else {
+            try{
+                return new JSONArray(fileWriterReader.readFiveDaysForecast());
+            } catch (JSONException e){
+                Log.e("JSONError", "retrieving 5DaysWeather", e);
             }
         }
         return null;
