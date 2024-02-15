@@ -1,5 +1,6 @@
 package Controller;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -16,9 +17,12 @@ import java.util.concurrent.CountDownLatch;
 
 //Erik Witte
 public class WeatherFetcher {
-    private String apiKey;
-    public WeatherFetcher(){
-        apiKey = "&appid=809847a25e5f68fa0bc19f41354fb5b7";
+    private final FileWriterReader fileWriterReader;
+    private final String apiKey;
+
+    public WeatherFetcher(Context context){
+        this.apiKey = "&appid=809847a25e5f68fa0bc19f41354fb5b7";
+        this.fileWriterReader = new FileWriterReader(context);
     }
 
     // stellt nicht das aktuelle datum
@@ -28,7 +32,9 @@ public class WeatherFetcher {
         String apiResponse = getApiData(queryUrl);
         if (apiResponse != null){
             try{
-                return new JSONObject(apiResponse);
+                JSONObject currenWeather = new JSONObject(apiResponse);
+                fileWriterReader.setCurrentWeather(currenWeather.toString());
+                return currenWeather;
             } catch (JSONException e){
                 Log.e("JSONError", "weatherFetcher, getCurrent", e);
             }
@@ -45,7 +51,9 @@ public class WeatherFetcher {
             try {
                 //API antwort zu JSON
                 JSONObject completeJson = new JSONObject(apiResponse);
-                return completeJson.getJSONArray("list");
+                JSONArray fiveDaysJson = completeJson.getJSONArray("list");
+                fileWriterReader.setFiveDaysForecast(fiveDaysJson.toString());
+                return fiveDaysJson;
             } catch (JSONException e) {
                 Log.e("JSONError", "weatherFetcher, get5Days", e);
             }
@@ -117,11 +125,9 @@ public class WeatherFetcher {
 
     public JSONArray getTomorrowsWeather(double latitude, double longitude){
         LocalDate today = LocalDate.now();
-        // generiert
         LocalDate tomorrow = today.plusDays(1);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = tomorrow.format(formatter);
-        // generiert
 
         JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();
@@ -146,11 +152,9 @@ public class WeatherFetcher {
 
     public JSONArray getThreeDaysWeather(double latitude, double longitude){
         LocalDate today = LocalDate.now();
-        // generiert
         LocalDate dayAfterTomorrow = today.plusDays(2);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = dayAfterTomorrow.format(formatter);
-        // generiert
 
         JSONArray completeWeatherArray = get5DaysJson(latitude, longitude);
         JSONArray weatherArray = new JSONArray();

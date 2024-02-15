@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import Controller.FileWriterReader;
 import Controller.WeatherFetcher;
 
 public class VideoPlayer {
@@ -29,13 +30,15 @@ public class VideoPlayer {
     private Context context;
     private PlayerView playerView;
     private WeatherFetcher weatherFetcher;
+    private final FileWriterReader fileWriterReader;
 
     public VideoPlayer(Context context, PlayerView playerView){
+        this.fileWriterReader = new FileWriterReader(context);
         this.context = context;
         this.exoPlayer = new ExoPlayer.Builder(context).build();
         this.playerView = playerView;
         playerView.setPlayer(exoPlayer);
-        this.weatherFetcher = new WeatherFetcher();
+        this.weatherFetcher = new WeatherFetcher(context);
     }
 
     public ExoPlayer getExoPlayer(){
@@ -43,6 +46,7 @@ public class VideoPlayer {
     }
 
     public void play(){
+        Log.i("esagfa", fileWriterReader.readCurrentWeather());
         if (hasInternet()){
             videoUrl = decideVideo();
             DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(context);

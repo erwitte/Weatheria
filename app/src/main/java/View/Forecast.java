@@ -45,7 +45,7 @@ public class Forecast {
     public Forecast(Context context, LayoutManager layoutManager, Location location){
         this.context = context;
         this.layoutManager = layoutManager;
-        this.weatherFetcher = new WeatherFetcher();
+        this.weatherFetcher = new WeatherFetcher(context);
         this.location = location;
         this.isViewed = false;
 
