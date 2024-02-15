@@ -4,9 +4,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 
 import com.example.weatheria.R;
@@ -49,29 +52,21 @@ public class VideoPlayer {
         Log.i("esagfa", fileWriterReader.readCurrentWeather());
         if (hasInternet()){
             videoUrl = decideVideo();
-            DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(context);
-
-            MediaItem mediaItem = MediaItem.fromUri(videoUrl);
-            ProgressiveMediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(mediaItem);
-            exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
+            DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context);
+            MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(MediaItem.fromUri(Uri.parse(videoUrl)));
             exoPlayer.setMediaSource(mediaSource);
-            exoPlayer.prepare();
-            exoPlayer.play();
+
         } else {
             videoUrl = "android.resource://" + context.getPackageName() + "/" + R.raw.clear;
-            String userAgent = Util.getUserAgent(context, context.getString(R.string.app_name));
-            DefaultHttpDataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
-                    .setUserAgent(userAgent);
-
-            MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+            DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context);
             MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(mediaItem);
-            exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
+                    .createMediaSource(MediaItem.fromUri(Uri.parse(videoUrl)));
             exoPlayer.setMediaSource(mediaSource);
-            exoPlayer.prepare();
-            exoPlayer.play();
         }
+        exoPlayer.setRepeatMode(ExoPlayer.REPEAT_MODE_ONE);
+        exoPlayer.prepare();
+        exoPlayer.play();
     }
 
     private boolean hasInternet(){
