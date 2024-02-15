@@ -44,10 +44,6 @@ public class VideoPlayer {
         this.weatherFetcher = new WeatherFetcher(context);
     }
 
-    public ExoPlayer getExoPlayer(){
-        return this.exoPlayer;
-    }
-
     public void play(){
         Log.i("esagfa", fileWriterReader.readCurrentWeather());
         if (hasInternet()){
@@ -84,7 +80,7 @@ public class VideoPlayer {
     }
 
     private String decideVideo(){
-        JSONObject currentWeather = weatherFetcher.getCurrentWeather(52.2719595, 8.047635);
+        JSONObject currentWeather = loadData();
         try{
             JSONArray weatherArray = currentWeather.getJSONArray("weather");
             JSONObject currentWeatherObject = weatherArray.getJSONObject(0);
@@ -105,6 +101,20 @@ public class VideoPlayer {
                 return "android.resource://" + context.getPackageName() + "/" + R.raw.clouds;
         } catch(JSONException e){
             Log.e("JSONError", "player, decideVideo", e);
+        }
+        return null;
+    }
+
+    private JSONObject loadData(){
+        try {
+            // lädt zuletzt geladenen ort aus dem speicher und fragt dessen aktuelles wetter ab
+            JSONObject weatherData = new JSONObject(fileWriterReader.readCurrentWeather());
+            JSONObject coordsObjet = weatherData.getJSONObject("coord");
+            double latittude = coordsObjet.getDouble("lat");
+            double longitude =coordsObjet.getDouble("lon");
+            return weatherFetcher.getCurrentWeather(latittude, longitude);
+        } catch (JSONException e){
+            Log.e("JSONError", "videoPlayer loadData", e);
         }
         return null;
     }
