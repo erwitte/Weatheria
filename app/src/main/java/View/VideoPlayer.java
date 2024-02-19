@@ -1,24 +1,18 @@
 package View;
 
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.Uri;
 import android.util.Log;
 
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 
 import com.example.weatheria.R;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,25 +24,46 @@ import Controller.FileWriterReader;
 import Controller.InternetChecker;
 import Controller.WeatherFetcher;
 
+/**
+ * Manages video playback functionality based on current weather conditions.
+ * This class integrates with the ExoPlayer library to display weather-related videos.
+ * It decides which video to play based on the current weather fetched from the {@link WeatherFetcher}.
+ * Internet availability is checked via {@link InternetChecker} to decide between local and remote video sources.
+ *
+ * Usage example:
+ * <pre>
+ *     PlayerView playerView = findViewById(R.id.player_view);
+ *     VideoPlayer videoPlayer = new VideoPlayer(getApplicationContext(), playerView);
+ *     videoPlayer.play();
+ * </pre>
+ */
 public class VideoPlayer {
-    private ExoPlayer exoPlayer;
-    private String videoUrl;
-    private Context context;
-    private PlayerView playerView;
-    private WeatherFetcher weatherFetcher;
+    private final ExoPlayer exoPlayer;
+    private final Context context;
+    private final WeatherFetcher weatherFetcher;
     private final FileWriterReader fileWriterReader;
 
+    /**
+     * Initializes a new instance of the VideoPlayer.
+     * @param context The application context used for creating the ExoPlayer and accessing resources.
+     * @param playerView The {@link PlayerView} where the video will be displayed.
+     */
     public VideoPlayer(Context context, PlayerView playerView){
         this.fileWriterReader = new FileWriterReader(context);
         this.context = context;
         this.exoPlayer = new ExoPlayer.Builder(context).build();
-        this.playerView = playerView;
         playerView.setPlayer(exoPlayer);
         this.weatherFetcher = new WeatherFetcher(context, fileWriterReader);
     }
 
+    /**
+     * Plays a video based on the current weather conditions.
+     * If the internet is available, the video corresponding to the current weather is fetched and played.
+     * If the internet is not available, a default 'no internet' video is played.
+     */
     public void play(){
         InternetChecker internetChecker = new InternetChecker(context);
+        String videoUrl;
         if (internetChecker.hasInternet()){
             videoUrl = decideVideo();
             DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context);
@@ -68,6 +83,10 @@ public class VideoPlayer {
         exoPlayer.play();
     }
 
+    /**
+     * Decides which video to play based on the current weather conditions fetched from the {@link WeatherFetcher}.
+     * @return The URI string of the video to be played.
+     */
     private String decideVideo(){
         JSONObject currentWeather = loadData();
         try{
@@ -94,6 +113,10 @@ public class VideoPlayer {
         return null;
     }
 
+    /**
+     * Loads the current weather data either from a saved file or creates a fictional JSON object if no data is available.
+     * @return The current weather data as a {@link JSONObject}.
+     */
     private JSONObject loadData(){
         File lastSearch = new File(context.getFilesDir(), "weatherData.txt");
         if (lastSearch.exists()) {
@@ -113,6 +136,11 @@ public class VideoPlayer {
         }
     }
 
+    /**
+     * Creates a fictional JSONObject to be used when no actual weather data is available.
+     * This method is useful for testing or default scenarios.
+     * @return A fictional {@link JSONObject} representing default weather conditions.
+     */
     private JSONObject createFictionalJSONObject(){
         String obj = "{\"coord\":{\"lon\":8.1213,\"lat\":52.6627},\"weather\":[{\"id\":800" +
                 ",\"main\":\"Clouds\",\"description\":\"broken clouds\",\"icon\":\"04d\"}],\"base\":\"stations\"" +

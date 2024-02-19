@@ -16,20 +16,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import Model.Location;
-
-//Erik Witte
+/**
+ * Asynchronously fetches geographical coordinates for a given location name using the OpenStreetMap API.
+ * This class is designed to make network requests in the background, parse the JSON response,
+ * and populate a list of {@link Location} objects with the matching locations found.
+ */
 public class LocationToCoords extends AsyncTask<String, Void, String> {
 
-    private List<Location> matchingLocations;
+    private final List<Location> matchingLocations;
     private final CountDownLatch latch;
-    private String stringFromJson;
 
+    /**
+     * Constructs a new {@code LocationToCoords} instance with a {@link CountDownLatch} to signal completion.
+     *
+     * @param latch A {@code CountDownLatch} used to await the completion of the asynchronous task.
+     */
     public LocationToCoords(CountDownLatch latch) {
         matchingLocations = new ArrayList<>();
         this.latch = latch;
     }
 
+    /**
+     * The background operation to fetch coordinates for a location name.
+     *
+     * @param params The location name to search for.
+     * @return A {@code String} indicating the result of the operation, typically unused in this context.
+     */
     @Override
     protected String doInBackground(String... params) {
         String desiredLocation = params[0];
@@ -52,7 +64,7 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
                 while ((line = reader.readLine()) != null) {
                     response.append(line);
                 }
-                stringFromJson = response.toString();
+                String stringFromJson = response.toString();
                 if (stringFromJson != null) {
                     try {
                         // API Antwort zu JSON umwandeln und einen index pro datenblock zuteilen
@@ -73,10 +85,9 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
                         Log.e("JSONParseError", "Error parsing JSON", e);
                     }
                 }
-            } finally {
-                urlConnection.disconnect();
-                return "";
             }
+            urlConnection.disconnect();
+            return "";
         } catch (Exception e) {
             //Error fangen
             Log.e("FetchCityCoordinatesError", "Error fetching city coordinates", e);
@@ -84,6 +95,11 @@ public class LocationToCoords extends AsyncTask<String, Void, String> {
         }
     }
 
+    /**
+     * Returns the list of {@link Location} objects matching the search query.
+     *
+     * @return A {@code List<Location>} populated with matching locations.
+     */
     public List<Location> getMatchingLocations(){
         return matchingLocations;
     }

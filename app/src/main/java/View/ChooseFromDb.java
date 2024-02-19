@@ -19,6 +19,11 @@ import java.util.List;
 
 import Controller.LocationHandler;
 
+/**
+ * Provides functionality to display and interact with a list of locations stored in the database.
+ * This class generates a dynamic view listing the saved locations, allowing the user to select a location for more details
+ * or to delete a location from the database via long press.
+ */
 public class ChooseFromDb {
 
     private final LayoutManager layoutManager;
@@ -26,12 +31,23 @@ public class ChooseFromDb {
     private final LocationHandler locationHandler;
     private int childCount = 0;
 
+    /**
+     * Initializes a new instance of ChooseFromDb with a layout manager and application context.
+     *
+     * @param layoutManager The {@link LayoutManager} responsible for updating the application's layout.
+     * @param context The application context used for creating view elements.
+     */
     public ChooseFromDb(LayoutManager layoutManager, Context context){
         this.context = context;
         this.layoutManager = layoutManager;
         this.locationHandler = new LocationHandler(context);
     }
 
+    /**
+     * Creates and returns a list of views for displaying the database locations window.
+     *
+     * @return A list of views including a title text, a database locations list, an info text, and a back button.
+     */
     public List<View> getDbView(){
         List<View> dbViewList = new ArrayList<>();
         dbViewList.add(createText());
@@ -41,6 +57,11 @@ public class ChooseFromDb {
         return dbViewList;
     }
 
+    /**
+     * Creates a ListView to display the names of the locations stored in the database.
+     *
+     * @return A {@link ListView} configured with the names of the saved locations.
+     */
     private View createTable(){
         ArrayAdapter<String> data = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1,
                 locationHandler.getDbEntries());
@@ -60,6 +81,11 @@ public class ChooseFromDb {
         return table;
     }
 
+    /**
+     * Creates a TextView displaying a prompt or title for the database view.
+     *
+     * @return A {@link TextView} configured to display the database title.
+     */
     private TextView createText(){
         TextView text = new TextView(context);
         text.setText(context.getString(R.string.datenbank));
@@ -80,6 +106,11 @@ public class ChooseFromDb {
         return text;
     }
 
+    /**
+     * Creates a back button for navigation.
+     *
+     * @return A {@link Button} configured for returning to the previous screen.
+     */
     private Button createBackBtn(){
         Button backBtn = new Button(context);
         backBtn.setText(context.getString(R.string.zurueck));
@@ -100,6 +131,11 @@ public class ChooseFromDb {
         return backBtn;
     }
 
+    /**
+     * Creates a TextView providing additional information or instructions to the user.
+     *
+     * @return A {@link TextView} displaying additional info or instructions.
+     */
     private TextView createInfoText(){
         TextView infoText = new TextView(context);
         infoText.setText(context.getString(R.string.loeschen));
@@ -119,6 +155,11 @@ public class ChooseFromDb {
         return infoText;
     }
 
+    /**
+     * Attaches item click listeners to the table for selecting and deleting database entries.
+     *
+     * @param table The {@link ListView} to which listeners are attached.
+     */
     private void createListeners(ListView table){
         table.setOnItemClickListener((parent, view, position, id) -> {
             layoutManager.chosenFromDb(locationHandler.getDbEntries().get(position), childCount);
