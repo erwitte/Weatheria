@@ -43,6 +43,7 @@ public class CurrentWeatherWindow {
      * @param location The location object containing the latitude and longitude for the weather data request.
      */
     public CurrentWeatherWindow(Context context, Location location){
+        // todo fileReaderWriter nicht erzeugen sondern als Parameter übergeben
         this.context = context;
         this.location = location;
         FileWriterReader fileWriterReader = new FileWriterReader(context);
