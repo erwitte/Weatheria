@@ -42,11 +42,10 @@ public class CurrentWeatherWindow {
      * @param context The application context used for creating view elements.
      * @param location The location object containing the latitude and longitude for the weather data request.
      */
-    public CurrentWeatherWindow(Context context, Location location){
+    public CurrentWeatherWindow(Context context, Location location, FileWriterReader fileWriterReader){
         // todo fileReaderWriter nicht erzeugen sondern als Parameter übergeben
         this.context = context;
         this.location = location;
-        FileWriterReader fileWriterReader = new FileWriterReader(context);
         WeatherFetcher weatherFetcher = new WeatherFetcher(context, fileWriterReader);
         this.tempTransformer = new TempTransformer();
         this.extractor = new DataExtractor();

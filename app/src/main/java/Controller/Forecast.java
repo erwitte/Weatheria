@@ -51,7 +51,7 @@ public class Forecast {
         this.isViewed = false;
         this.extractor = new DataExtractor();
         this.tempTransformer = new TempTransformer();
-        this.currentWeatherWindow = new CurrentWeatherWindow(context, location);
+        this.currentWeatherWindow = new CurrentWeatherWindow(context, location, fileWriterReader);
         forecastViewCounter = 0;
 
         // speichert den genauen namen der aktuellen vorhersage für den nächsten start
